@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gypsy Water Supply - Register</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f9ece7; /* Pastel Pink */
+            font-family: 'Arial', sans-serif;
+            color: #333; /* Dark Gray for text */
+        }
+
+        .navbar {
+            background-color: #aed9e0; /* Pastel Blue */
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            color: #333 !important; /* Dark Gray for navbar text */
+        }
+
+        .navbar-nav .nav-link {
+            color: #333 !important; /* Dark Gray for navbar text */
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .register-form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .register-form h2 {
+            color: #117a8b; /* Dark Blue */
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            color: #117a8b; /* Dark Blue */
+        }
+
+        .submit-btn {
+            background-color: #117a8b; /* Dark Blue */
+            color: #fff;
+            border: none;
+        }
+
+        .submit-btn:hover {
+            background-color: #0e5a66; /* Slightly darker shade of blue */
+        }
+
+        .footer {
+            background-color: #117a8b; /* Dark Blue */
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="#">Gypsy Water Supply</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="land.html">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Contact</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="login.html">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link btn btn-outline-light" href="#">Sign Up</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Registration Form -->
+<div class="container register-form">
+    <h2>Register</h2>
+    <form id="registrationForm">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input type="tel" class="form-control" id="phoneNumber" name="phoneNumber" required>
+            <span class="error-message" id="phoneNumberError"></span>
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            <span class="error-message" id="emailError"></span>
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+            <span class="error-message" id="passwordMatchError"></span>
+        </div>
+        <button type="submit" class="btn btn-block submit-btn">Submit</button>
+    </form>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+    <p>&copy; 2024 Gypsy Water Supply. All rights reserved.</p>
+</div>
+
+<!-- Bootstrap JS and Popper.js CDN -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const registrationForm = document.getElementById('registrationForm');
+  
+      registrationForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+  
+        // Client-side validation
+        if (!validateForm()) {
+          return;
+        }
+  
+        const formData = new FormData(this);
+        const userData = {};
+  
+        formData.forEach((value, key) => {
+          userData[key] = value;
+        });
+  
+        try {
+          const response = await fetch('http://localhost:4000/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+          });
+  
+          if (response.ok) {
+    alert('User registration successful.');
+    
+    } else {
+        const errorData = await response.json();
+        if (errorData.error === 'UserExists') {
+            alert(errorData.message);
+        } else {
+            alert(`Error registering user: ${errorData.message}`);
+        }
+    }
+        } catch (error) {
+          console.error(error);
+         // alert('An error occurred');
+        }
+      });
+  
+      function validateForm() {
+        const nameInput = document.getElementById('name');
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const phoneNumberError = document.getElementById('phoneNumberError');
+        const emailError = document.getElementById('emailError');
+        const passwordMatchError = document.getElementById('passwordMatchError');
+  
+        // Reset previous error messages
+        phoneNumberError.textContent = '';
+        emailError.textContent = '';
+        passwordMatchError.textContent = '';
+  
+        if (nameInput.value.trim() === '' || phoneNumberInput.value.trim() === '' ||
+            emailInput.value.trim() === '' || passwordInput.value === '' ||
+            confirmPasswordInput.value === '') {
+          alert('All fields are required');
+          return false;
+        }
+  
+        if (passwordInput.value !== confirmPasswordInput.value) {
+          passwordMatchError.textContent = 'Passwords do not match';
+          return false;
+        }
+  
+        // You can add more specific validation rules if needed
+  
+        return true;
+      }
+    });
+  </script>
+  
+</body>
+</html>

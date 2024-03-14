@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Admin Login Page</title>
+    <style>
+        * {
+            box-sizing: border-box;
+          }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #c5afaf;
+            font-family: Arial, sans-serif;
+        }
+
+        .login-box {
+            width: 300px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .forget-password-link {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.forget-password-link a {
+    color: blue;
+    text-decoration: none;
+}
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .error {
+            color: red;
+            font-size: 12px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        input[type="submit"],
+        .register-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #b96c62;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover,
+        .register-button:hover {
+            background-color: #ce8b64;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .register-link a {
+            color: blue;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .login-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>Login</h1>
+        <form id="login-form" onsubmit="submitLoginForm()">
+            <label for="username">Username/Phone Number:</label><br>
+            <input type="text" id="username" name="username"><br>
+            <span id="username-error" class="error"></span><br>
+            <label for="password">Password:</label><br>
+            <input type="password" id="password" name="password"><br>
+            <span id="password-error" class="error"></span><br>
+            
+            <div class="forget-password-link">
+                <a href="forgot.html">Forgot Password?</a>
+            </div>
+            <input type="submit" value="Submit" >
+        </form>
+    </div>  
+
+        <script>
+            async function submitLoginForm() {
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+                event.preventDefault();
+                if (username === "admin" && password === "admin123") {
+        window.location.href = 'admin.html';
+    } else {
+         try {
+                    const response = await fetch('http://localhost:4000/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ phoneNumber: username, password }),
+                    });
+
+                    if (response.ok) {
+                       window.location.href = 'test.html';
+                            console.log('Login successful for normal user');
+                        
+                    } else {
+                        const data = await response.json();
+                        document.getElementById("password-error").innerText = data.error;
+                        document.getElementById("password-error").style.display = "block";
+                    }
+                } catch (error) {
+                    console.error('Error during login:', error);
+                }
+    }
+
+
+               
+            }
+        </script>
+        </body>
+        </html>

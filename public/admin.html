@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: beige;
+            color: #09545a;
+            text-align: center;
+            padding: 50px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #110202;
+        }
+
+        #orderTable {
+            width: 80%;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #bb5858;
+        }
+
+        th {
+            background-color: #166a71;
+            color: white;
+        }
+
+        td {
+            white-space: nowrap;
+        }
+
+        .deleteButton {
+            background-color: #f44336;
+            color: white;
+            padding: 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .deleteButton:hover {
+            background-color: #d32f2f;
+        }
+
+        header, footer {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+        }
+
+        footer {
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Admin Portal</h1>
+    </header>
+
+    <h2>Order List</h2>
+
+    <div id="orderTable">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone Number</th>
+                    <th>Total Cans</th>
+                    <th>Delivery Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="orderListBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:4000/getadmin';
+        
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(responseData => {
+            console.log('API Response:', responseData);
+            const orderListBody = document.getElementById('orderListBody');
+            
+            if (Array.isArray(responseData.data)) {
+                responseData.data.forEach(data => {
+                    const row = document.createElement('tr');
+
+                    const columns = ['name', 'address', 'phoneNo', 'cans', 'deliverystatus'];                    columns.forEach(column => {
+                        const cell = document.createElement('td');
+                        cell.textContent = data[column];
+                        row.appendChild(cell);
+                    });
+
+                    const actionCell = document.createElement('td');
+                    const deleteButton = document.createElement('button');
+
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.classList.add('deleteButton');
+                    deleteButton.addEventListener('click', () => handleDelete(data.phoneNo));
+
+                    actionCell.appendChild(deleteButton);
+
+                    row.appendChild(actionCell);
+                    orderListBody.appendChild(row);
+                });
+            } else {
+                console.error('Data is not an array:', responseData);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+
+        function handleDelete(phoneNo) {
+            const confirmDelete = confirm(`Are you sure you want to delete the order for ${phoneNo}?`);
+            if (confirmDelete) {
+                const deleteUrl = `http://localhost:4000/deleteOrder?phoneNo=${phoneNo}`;
+                fetch(deleteUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Delete Response:', data);
+                    // Refresh the table after deleting
+                    location.reload();
+                }) .catch(error => {
+                    console.error('Error deleting order:', error);
+                });
+            }
+        }
+    </script>
+    
+</body>
+</html>

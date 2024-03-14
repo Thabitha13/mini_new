@@ -1,0 +1,50 @@
+<!-- Add this page with proper styling -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Reset Password</title>
+</head>
+<body>
+    <h1>Reset Password</h1>
+    <form id="reset-password-form" onsubmit="resetPassword()">
+        <label for="otp">Enter OTP:</label><br>
+        <input type="text" id="otp" name="otp" required><br>
+        <label for="new-password">New Password:</label><br>
+        <input type="password" id="new-password" name="new-password" required><br>
+        <label for="confirm-password">Confirm Password:</label><br>
+        <input type="password" id="confirm-password" name="confirm-password" required><br>
+        <input type="submit" value="Reset Password">
+    </form>
+
+    <script>
+        async function resetPassword() {
+            const otp = document.getElementById("otp").value;
+            const newPassword = document.getElementById("new-password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+
+            // Validate OTP, passwords, and other necessary checks
+
+            try {
+                const response = await fetch('http://localhost:4000/reset-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ otp, newPassword }),
+                });
+
+                if (response.ok) {
+                    // Password reset successful, redirect to login page or other appropriate page
+                    window.location.href = 'login.html';
+                } else {
+                    const data = await response.json();
+                    console.error('Password reset failed:', data.error);
+                    // Display error message to the user
+                }
+            } catch (error) {
+                console.error('Error during password reset:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gypsy Fresh Water Delivery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="bookas.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css" crossorigin=""/>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="heading-background"></div>
+      <h1 class="heading-text"><i class="fas fa-tint heading-icon"></i>GYPSY FRESH WATER</h1>
+      <p>Your Convenient Source for Fresh Water Delivery</p>
+      <img src="logo.jpeg" alt="Company Logo" class="logo">
+    </div>
+    <div class="message">
+      <p>Make your can order here</p>
+    </div>
+    <div class="form-container">
+      <form class="needs-validation" id="orderForm" novalidate>
+        <div class="form-group">
+          <label for="totalCans">Total Cans:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <button class="btn btn-outline-secondary" type="button" id="subtractBtn" title="Decrease">-</button>
+            </div>
+            <input type="number" class="form-control" id="totalCans" name="totalCans" min="1" max="30" value="1" required>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" id="addBtn" title="Increase">+</button>
+            </div>
+            <pre style="font-size: large; color: #742525f9; font-weight: bolder;">  Maximum 30 cans per order  </pre>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="address">Address:</label>
+          <input type="text" class="form-control" id="address" name="address" required onchange="getCoordinates()">
+          <input type="hidden" id="latitude" name="latitude">
+          <input type="hidden" id="longitude" name="longitude">
+        </div>
+        <div class="form-group">
+          <label for="phoneNo">Phone No:</label>
+          <input type="tel" class="form-control" id="phoneNo" name="phoneNo" pattern="[0-9]{10}" required>
+          <div class="invalid-feedback">
+            Please enter a 10-digit phone number.
+          </div>
+        </div>
+        <button class="btn btn-primary btn-custom" type="submit"><i class="fas fa-book"></i> Book Now</button>
+      </form>
+    </div>
+    <div id="map" style="width: 100%; height: 400px;"></div>
+  </div>
+ 
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js" crossorigin=""></script>
+  <script src="validation.js"></script>
+  
+  <script>
+    function getCoordinates() {
+      const address = document.getElementById('address').value;
+      const url = `https://nominatim.openstreetmap.org/search?q=${address}&format=json&limit=1&polygon=0`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.length > 0) {
+            const lat = data[0].lat;
+            const lon = data[0].lon;
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lon;
+            // Display the geocoded location on a map
+            const map = L.map('map').setView([lat, lon], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            L.marker([lat, lon]).addTo(map);
+          } else {
+            alert('Unable to find address coordinates.');
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          alert('An error occurred while retrieving coordinates.');
+        });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Gypsy Fresh Water Delivery</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif; /* Using Google Font Roboto for headings */
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .heading-icon {
+      font-size: 2.5rem; 
+      margin-right: 10px;
+    }
+    .logo {
+      width: 250px; 
+      height: auto; 
+      display: block;
+      margin: 20px auto; 
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 style="font-size: 2.5rem;"><i class="fas fa-tint heading-icon"></i>Welcome to Gypsy Water Supply</h1>
+      <p>Your Convenient Source for Fresh Water Delivery</p>
+      <img src="logo.jpeg" class="logo">
+    </div>
+    <form class="needs-validation" novalidate id="registrationForm">
+      <div class="form-group">
+        <label for="cans">Total Cans:</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <button class="btn btn-outline-secondary" type="button" id="subtractBtn"><i class="fas fa-minus"></i></button>
+          </div>
+          <input type="number" class="form-control" id="cans" name="cans" min="1" max="10" value="1" required>
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" id="addBtn"><i class="fas fa-plus"></i></button>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="address">Address:</label>
+        <input type="text" class="form-control" id="address" name="address" required>
+      </div>
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+      </div>
+      <div class="form-group">
+        <label for="phoneNo">Phone No:</label>
+        <input type="text" class="form-control" id="phoneNo" name="phoneNo" minlength="10" maxlength="10" required>
+        <div class="invalid-feedback">
+          Please enter a 10-digit phone number.
+        </div>
+      </div>
+      <button class="btn btn-primary" id="sub" type="submit" onclick="Registration()"><i class="fas fa-book"></i> Book Now</button>
+    </form>
+  </div>
+ 
+
+  <footer class="mt-5 text-center">
+    <p>@gypsypvtlimited | Contact: +9973654565 | <a href="login.html">Admin</a></p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Enable Bootstrap validation
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+            if (form.checkValidity() === false) {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+          }, false);
+        });
+      }, false);
+    })();
+
+    // Increment and Decrement buttons for Total Cans
+    document.getElementById('addBtn').addEventListener('click', function() {
+      var cans = document.getElementById('cans');
+      cans.value = parseInt(cans.value) + 1;
+    });
+
+    document.getElementById('subtractBtn').addEventListener('click', function() {
+      var cans = document.getElementById('cans');
+      if (parseInt(cans.value) > 1) {
+        cans.value = parseInt(cans.value) - 1;
+      }
+    });
+
+    async function Registration() {
+      const formData = new FormData(document.getElementById('registrationForm'));
+      const urlSearchParams = new URLSearchParams(formData);
+      const queryString = urlSearchParams.toString();
+
+      const apiUrl = 'http://localhost:4000/reg';
+
+      fetch(`${apiUrl}?${queryString}`)
+        .then(response => {
+          if (!response.ok) {
+            return response.json().then(data => {
+              throw new Error(data.msg);
+            });
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Show the success modal
+          alert('Order placed successfully!'); // Show alert
+          console.log("data inserted successfully");
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('error-msg').textContent = 'Error in inserting data. Please try again.';
+        });
+    }
+  </script>
+
+</body>
+</html>
