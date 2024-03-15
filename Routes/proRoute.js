@@ -3,9 +3,10 @@ const router = express.Router();
 const order = require('../Models/orderModel');
 const User = require('../Models/userModel');
 const bcrypt = require('bcrypt');
-const Token = require("../Models/tokenModel");
+// const Token = require("../Models/tokenModel");
 // const nodemailer = require('nodemailer');
-const JWT = require("jsonwebtoken");
+// const JWT = require("jsonwebtoken");
+// require("dotenv").config();
 // const sendEmail = require("../utils/email/sendEmail");
 router.get('/reg', async (req,res) =>{
     try {
@@ -106,7 +107,7 @@ router.post('/register', async (req, res) => {
         email,
         password,
       });
-       const token = JWT.sign({ id: newUser._id }, JWTSecret);
+     
   
       await newUser.save();
       res.status(200).send('User registration successful');

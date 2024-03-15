@@ -1,11 +1,16 @@
 var mongoose = require('mongoose');
-const tokenSchema = new mongoose.Schema({
+const Schema = mongoose.Schema;
+const tokenSchema = new Schema({
     userId: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: "user",
     },
     token: {
+        type: String,
+        required: true,
+    },
+    otp: {
         type: String,
         required: true,
     },
