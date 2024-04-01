@@ -3,69 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gypsy Water Supply</title>
-    <!-- Bootstrap CDN -->
+    <title>Gypsy Fresh Water</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
     <style>
-        /* Add your custom styles here */
         body {
-            background-color: #f9ece7; /* Pastel Pink */
             font-family: 'Arial', sans-serif;
-            color: #333; /* Dark Gray for text */
+            color: #333;
         }
 
         .navbar {
-            background-color: #aed9e0; /* Pastel Blue */
-            z-index: 1000;
+            background-color: #117a8b;
         }
 
         .navbar-brand {
-            color: #333 !important; /* Dark Gray for navbar text */
+            color: #fff !important;
         }
 
         .navbar-nav .nav-link {
-            color: #333 !important; /* Dark Gray for navbar text */
+            color: #fff !important;
+        }
+
+
+        .navbar-nav .nav-link:hover {
+            color: #000 !important; 
         }
 
         .container {
-            padding: 20px;
+            padding: 10px;
         }
 
         .logo {
-            max-width: 200px; /* Adjust the max-width of the logo */
+            display: block;
+            margin: 0 auto;
+            max-width: 300px;
         }
 
         .features h2,
         .sizes h2,
         .signup-section h2,
         .contact h2 {
-            color: #117a8b; /* Dark Blue */
+            color: #117a8b;
         }
 
         .signup-btn {
             background-color: #fff;
-            color: #117a8b; /* Dark Blue */
+            color: #117a8b;
             border: 2px solid #117a8b;
         }
 
         .signup-btn:hover {
-            background-color: #117a8b; /* Dark Blue */
-            color: #fff;
+            background-color: #0e606e00;
+            color: #0000008c;
         }
 
         .footer {
-            background-color: #117a8b; /* Dark Blue */
+            background-color: #117a8b;
             color: #fff;
             text-align: center;
-            padding: 20px 0;
         }
+
+        .section-icon {
+            margin-right: 8px;
+        }
+
     </style>
 </head>
 <body>
 
-<!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
-    <a class="navbar-brand" href="#">Gypsy Water Supply</a>
+    <a class="navbar-brand" href="#">GYPSY FRESH WATER</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -73,13 +81,10 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="land.html">Home</a>
+                <a class="nav-link" href="#about"><i class="fas fa-info-circle section-icon"></i>About Us</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="">About</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="">Contact</a>
+                <a class="nav-link" href="#contact"><i class="fas fa-phone section-icon"></i>Contact</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="login.html">Login</a>
@@ -91,14 +96,13 @@
     </div>
 </nav>
 
-<!-- Logo Section -->
-<div class="container">
+<div id="home" class="container">
     <img src="logo.jpeg" alt="Gypsy Water Supply Logo" class="logo">
 </div>
 
-<!-- Features Section -->
-<div class="container features">
-    <h2>Why Choose Gypsy Water Supply?</h2>
+<section id="about"></section>
+<div id="about" class="container features">
+    <h2>Why Choose Gypsy Fresh Water?</h2>
     <div class="row">
         <div class="col-md-4">
             <div class="card">
@@ -127,26 +131,23 @@
     </div>
 </div>
 
-<!-- Sign Up Section -->
-<div class="container signup-section">
+<section id="contact"></section>
+<div id="contact" class="container signup-section">
     <h2>Sign Up for Exclusive Offers</h2>
     <p>Join our community for special promotions and updates.</p>
-    <a href="#" class="btn btn-lg signup-btn">Sign Up</a>
+    <a class="btn btn-lg signup-btn" href="register.html">Sign Up</a>
 </div>
 
-<!-- Contact Section -->
 <div class="container contact">
     <h2>Contact Us</h2>
     <p>Have questions? Reach out to our friendly support team.</p>
-    <!-- Add your contact form or information here -->
+    <p>Phone Number: xxxxxxxxxx</p>
 </div>
 
-<!-- Footer -->
-<div class="container footer">
-    <p>&copy; 2024 Gypsy Water Supply. All rights reserved.</p>
+<div class="footer">
+    <p>&copy; 2024 Gypsy Fresh Water <br> All rights reserved</p>
 </div>
 
-<!-- Bootstrap JS and Popper.js CDN -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

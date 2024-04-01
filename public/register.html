@@ -4,26 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gypsy Water Supply - Register</title>
-    <!-- Bootstrap CDN -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f9ece7; /* Pastel Pink */
-            font-family: 'Arial', sans-serif;
-            color: #333; /* Dark Gray for text */
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            color: #333; 
         }
 
         .navbar {
-            background-color: #aed9e0; /* Pastel Blue */
+            background-color:  #117a8b; 
             z-index: 1000;
         }
 
         .navbar-brand {
-            color: #333 !important; /* Dark Gray for navbar text */
+            color: #fff !important; 
         }
 
         .navbar-nav .nav-link {
-            color: #333 !important; /* Dark Gray for navbar text */
+            color: #fff !important; 
         }
 
         .container {
@@ -40,7 +38,7 @@
         }
 
         .register-form h2 {
-            color: #117a8b; /* Dark Blue */
+            color: #117a8b;
             text-align: center;
         }
 
@@ -49,33 +47,30 @@
         }
 
         .form-group label {
-            color: #117a8b; /* Dark Blue */
+            color: #117a8b;
         }
 
         .submit-btn {
-            background-color: #117a8b; /* Dark Blue */
+            background-color: #117a8b; 
             color: #fff;
             border: none;
         }
 
         .submit-btn:hover {
-            background-color: #0e5a66; /* Slightly darker shade of blue */
+            background-color: #0e5a66;
         }
 
         .footer {
-            background-color: #117a8b; /* Dark Blue */
+            background-color: #117a8b;
             color: #fff;
             text-align: center;
-            padding: 20px 0;
-            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-<!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-dark">
-    <a class="navbar-brand" href="#">Gypsy Water Supply</a>
+    <a class="navbar-brand" href="#">GYPSY FRESH WATER</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -86,22 +81,12 @@
                 <a class="nav-link" href="land.html">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">About</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Contact</a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="login.html">Login</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link btn btn-outline-light" href="#">Sign Up</a>
             </li>
         </ul>
     </div>
 </nav>
 
-<!-- Registration Form -->
 <div class="container register-form">
     <h2>Register</h2>
     <form id="registrationForm">
@@ -133,93 +118,104 @@
     </form>
 </div>
 
-<!-- Footer -->
 <div class="footer">
-    <p>&copy; 2024 Gypsy Water Supply. All rights reserved.</p>
+    <p>&copy; 2024 Gypsy Water Supply <br> All rights reserved</p>
 </div>
 
-<!-- Bootstrap JS and Popper.js CDN -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-      const registrationForm = document.getElementById('registrationForm');
-  
-      registrationForm.addEventListener('submit', async function (event) {
-        event.preventDefault();
-  
-        // Client-side validation
-        if (!validateForm()) {
-          return;
-        }
-  
-        const formData = new FormData(this);
-        const userData = {};
-  
-        formData.forEach((value, key) => {
-          userData[key] = value;
+        const registrationForm = document.getElementById('registrationForm');
+
+        registrationForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            if (!validateForm()) {
+                return;
+            }
+
+            const formData = new FormData(this);
+            const userData = {};
+
+            formData.forEach((value, key) => {
+                userData[key] = value;
+            });
+
+            try {
+                const response = await fetch('http://localhost:4000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData),
+                });
+
+                if (response.ok) {
+                    alert('User registration successful.');
+
+                } else {
+                    const errorData = await response.json();
+                    if (errorData.error === 'UserExists') {
+                        alert(errorData.message);
+                    } else {
+                        alert(`Error registering user: ${errorData.message}`);
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+            }
         });
-  
-        try {
-          const response = await fetch('http://localhost:4000/register', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData),
-          });
-  
-          if (response.ok) {
-    alert('User registration successful.');
-    
-    } else {
-        const errorData = await response.json();
-        if (errorData.error === 'UserExists') {
-            alert(errorData.message);
-        } else {
-            alert(`Error registering user: ${errorData.message}`);
+
+        function validateForm() {
+            const nameInput = document.getElementById('name');
+            const phoneNumberInput = document.getElementById('phoneNumber');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const phoneNumberError = document.getElementById('phoneNumberError');
+            const emailError = document.getElementById('emailError');
+            const passwordMatchError = document.getElementById('passwordMatchError');
+
+            phoneNumberError.textContent = '';
+            emailError.textContent = '';
+            passwordMatchError.textContent = '';
+
+            const nameRegex = /^[a-zA-Z\s]*$/;
+            const phoneNumberRegex = /^\d{10}$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+
+            if (!nameRegex.test(nameInput.value.trim())) {
+                alert('Name should contain only alphabets');
+                return false;
+            }
+
+            if (!phoneNumberRegex.test(phoneNumberInput.value.trim())) {
+                alert('Phone number should be 10 digits');
+                return false;
+            }
+
+            if (!emailRegex.test(emailInput.value.trim())) {
+                alert('Invalid email address');
+                return false;
+            }
+
+            if (!passwordRegex.test(passwordInput.value)) {
+                alert('Password must be at least 8 characters long and contain at least one digit, one letter, and one special character.');
+                return false;
+            }
+
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                passwordMatchError.textContent = 'Passwords do not match';
+                return false;
+            }
+
+            return true;
         }
-    }
-        } catch (error) {
-          console.error(error);
-         // alert('An error occurred');
-        }
-      });
-  
-      function validateForm() {
-        const nameInput = document.getElementById('name');
-        const phoneNumberInput = document.getElementById('phoneNumber');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const confirmPasswordInput = document.getElementById('confirmPassword');
-        const phoneNumberError = document.getElementById('phoneNumberError');
-        const emailError = document.getElementById('emailError');
-        const passwordMatchError = document.getElementById('passwordMatchError');
-  
-        // Reset previous error messages
-        phoneNumberError.textContent = '';
-        emailError.textContent = '';
-        passwordMatchError.textContent = '';
-  
-        if (nameInput.value.trim() === '' || phoneNumberInput.value.trim() === '' ||
-            emailInput.value.trim() === '' || passwordInput.value === '' ||
-            confirmPasswordInput.value === '') {
-          alert('All fields are required');
-          return false;
-        }
-  
-        if (passwordInput.value !== confirmPasswordInput.value) {
-          passwordMatchError.textContent = 'Passwords do not match';
-          return false;
-        }
-  
-        // You can add more specific validation rules if needed
-  
-        return true;
-      }
     });
-  </script>
-  
+</script>
+
 </body>
 </html>

@@ -1,50 +1,74 @@
-<!-- Add this page with proper styling -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
 </head>
 <body>
-    <h1>Reset Password</h1>
-    <form id="reset-password-form" onsubmit="resetPassword()">
-        <label for="otp">Enter OTP:</label><br>
-        <input type="text" id="otp" name="otp" required><br>
-        <label for="new-password">New Password:</label><br>
-        <input type="password" id="new-password" name="new-password" required><br>
-        <label for="confirm-password">Confirm Password:</label><br>
-        <input type="password" id="confirm-password" name="confirm-password" required><br>
+    <h2>Reset Password</h2>
+    <form id="resetPasswordForm" action="/reset-password" method="POST">
+        <label for="password">New Password:</label>
+        <input type="password" id="password" name="password" required>
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+        <input type="hidden" name="email" id="email" value="">
         <input type="submit" value="Reset Password">
     </form>
 
     <script>
-        async function resetPassword() {
-            const otp = document.getElementById("otp").value;
-            const newPassword = document.getElementById("new-password").value;
-            const confirmPassword = document.getElementById("confirm-password").value;
+        // Set the email value in the hidden field
+        document.getElementById('email').value = decodeURIComponent(window.location.search.split('=')[1]);
+        document.addEventListener('DOMContentLoaded', () => {
+    const resetPasswordForm = document.getElementById('resetPasswordForm');
 
-            // Validate OTP, passwords, and other necessary checks
+    resetPasswordForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent the default form submission behavior
+        
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const email = document.getElementById('email').value;
 
-            try {
-                const response = await fetch('http://localhost:4000/reset-password', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ otp, newPassword }),
-                });
-
-                if (response.ok) {
-                    // Password reset successful, redirect to login page or other appropriate page
-                    window.location.href = 'login.html';
-                } else {
-                    const data = await response.json();
-                    console.error('Password reset failed:', data.error);
-                    // Display error message to the user
-                }
-            } catch (error) {
-                console.error('Error during password reset:', error);
-            }
+        // Check if passwords match
+        if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            return;
         }
+
+        // Prepare the data to send in the request body
+        const data = {
+            email: email,
+            password: password,
+            confirmPassword: confirmPassword
+        };
+
+        try {
+            // Send POST request to /reset-password endpoint
+            const response = await fetch('/reset-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            // Check if the request was successful
+            if (response.ok) {
+                const responseData = await response.json();
+                alert(responseData.msg); // Display success message
+                // Redirect to a new page or perform any other action as needed
+            } else {
+                // Display error message if request was not successful
+                const errorData = await response.json();
+                alert(errorData.msg);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again later.');
+        }
+    });
+});
+
     </script>
 </body>
 </html>

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
+
 const app = express();
 const port = 4000;
 mongoose.connect('mongodb+srv://thabithaantony13:thabitha4474@cluster0.5n5w20l.mongodb.net/?retryWrites=true&w=majority');
@@ -13,6 +14,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 var user = require('./Routes/proRoute');
+
+var verifyOtp = require('./Routes/otpRoute/otp');
 
 app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -25,6 +28,8 @@ app.use(function (req, res, next) {
 });
 
 app.use(user);
+app.use(verifyOtp);
+
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });

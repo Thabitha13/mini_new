@@ -53,12 +53,38 @@
             <label for="email">Enter your email:</label>
             <input type="email" id="email" name="email" required>
             <div class="submit-buttons">
-                <input type="submit" value="Send OTP">
-                <input type="submit" value="Verify OTP">
+                <input type="submit" value="Send OTP" onclick="sendOTP()">
+                <input type="submit" value="Verify OTP" onclick="verifyOTP()">
             </div>
         </form>
     </div>
 
-    <!-- JavaScript code for handling form submission will be added later -->
+    <script>
+       async function sendOTP() {
+    const email = document.getElementById('email').value;
+
+    try {
+        const response = await fetch('http://localhost:4000/sendOtp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+        });
+        if (response.ok) {
+            const data = await response.json(); // Parse response body
+            alert(data.msg); // Access the message from the response
+        } else {
+            console.error('Error:', error);
+        }
+    } catch (error) {
+        console.error('Error sending:', error);
+    }
+}
+        function verifyOTP() {
+            // Implement verification of OTP if needed
+            console.log('OTP verification function');
+        }
+    </script>
 </body>
 </html>

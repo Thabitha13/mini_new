@@ -3,9 +3,10 @@ const router = express.Router();
 const order = require('../Models/orderModel');
 const User = require('../Models/userModel');
 const bcrypt = require('bcrypt');
-const Token = require("../Models/tokenModel");
+// const Token = require("../Models/tokenModel");
 // const nodemailer = require('nodemailer');
-const JWT = require("jsonwebtoken");
+// const JWT = require("jsonwebtoken");
+// require("dotenv").config();
 // const sendEmail = require("../utils/email/sendEmail");
 router.get('/reg', async (req,res) =>{
     try {
@@ -64,7 +65,7 @@ router.delete('/deleteOrder', async (req, res) => {
     const phoneNo = req.query.phoneNo;
 
     try {
-        const deletedOrder = await add.findOneAndDelete({ phoneNo: phoneNo });
+        const deletedOrder = await order.findOneAndDelete({ phoneNo: phoneNo });
         if (deletedOrder) {
             return res.status(200).json({
                 status: true,
@@ -93,11 +94,17 @@ router.post('/register', async (req, res) => {
     try {
       const { name, phoneNumber, email, password } = req.body;
       const existingUser = await User.findOne({ phoneNumber });
-
       if (existingUser) {
         return res.status(400).json({ error: 'UserExists', message: 'User with this phone number already exists' });
 
       }
+      const existingEmailUser = await User.findOne({ email });
+
+      if (existingEmailUser) {
+          return res.status(400).json({ error: 'UserExists', message: 'User with this email already exists.' });
+      }
+
+     
       
 
       const newUser = new User({
@@ -106,7 +113,7 @@ router.post('/register', async (req, res) => {
         email,
         password,
       });
-       const token = JWT.sign({ id: newUser._id }, JWTSecret);
+     
   
       await newUser.save();
       res.status(200).send('User registration successful');
@@ -151,4 +158,22 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+router.post('/Orders', async (req, res) => {
+    try {
+      const orders = new order(req.body);
+      await orders.save();
+      res.status(201).send(orders);
+    } catch (error) {
+      res.status(400).send(error);
+    }
+  });
+  
+  router.get('/', async (req, res) => {
+    try {
+      const orders = await order.find();
+      res.send(orders);
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  });
 module.exports = router;
