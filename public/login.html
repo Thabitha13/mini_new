@@ -34,9 +34,9 @@
                 const password = document.getElementById("password").value;
                 event.preventDefault();
                 if (username === "admin" && password === "admin123") {
-        window.location.href = 'admin.html';
-    } else {
-         try {
+                    window.location.href = 'admin.html';
+                } else {
+                    try {
                     const response = await fetch('http://localhost:4000/login', {
                         method: 'POST',
                         headers: {
@@ -46,8 +46,9 @@
                     });
 
                     if (response.ok) {
-                       window.location.href = 'test.html';
-                       console.log('Login successful for normal user');
+                        sessionStorage.setItem("userPhone", username);
+                        window.location.href = 'test.html';
+                        console.log('Login successful for normal user');
                         
                     } else {
                         const data = await response.json();

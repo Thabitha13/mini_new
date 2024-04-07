@@ -51,7 +51,9 @@ router.get('/reg', async (req, res) => {
 })
 
 router.get('/getadmin', async (req, res) => {
-    const orders = await Order.find({}, '_id name address phoneNo cans totalCans deliverystatus');
+    const orders = await Order.find({}, '_id address phoneNo cans totalCans deliverystatus')
+        .sort({ createdAt: -1 }) // Sort by createdAt field in descending order
+        .exec();
 
     res.status(200).json({
         status: true,
@@ -176,24 +178,69 @@ router.delete('/deleteOrder', async (req, res) => {
 
 router.post('/edit-order/:orderId', async (req, res) => {
     try {
-      const orderId = req.params.orderId;
-      const editedData = req.body;
-  
-      // Update the order in the database using Mongoose
-      const updatedOrder = await Order.findByIdAndUpdate(orderId, editedData, { new: true });
-  
-      if (!updatedOrder) {
-        return res.status(404).json({ status: false, message: 'Order not found' });
-      }
-  
-      // Send a success response with the updated order
-      res.status(200).json({ status: true, data: updatedOrder });
-    } catch (error) {
-      console.error('Error updating order:', error);
-      res.status(500).json({ status: false, message: 'Internal server error' });
-    }
-  });
+        const orderId = req.params.orderId;
+        const editedData = req.body;
 
+        // Update the order in the database using Mongoose
+        const updatedOrder = await Order.findByIdAndUpdate(orderId, editedData, { new: true });
+
+        if (!updatedOrder) {
+            return res.status(404).json({ status: false, message: 'Order not found' });
+        }
+
+        // Send a success response with the updated order
+        res.status(200).json({ status: true, data: updatedOrder });
+    } catch (error) {
+        console.error('Error updating order:', error);
+        res.status(500).json({ status: false, message: 'Internal server error' });
+    }
+});
+
+router.get('/user-orders/:phoneNum', async (req, res) => {
+    try {
+        const phoneNo = req.params.phoneNum;
+        const orders = await Order.find(
+            { phoneNo: phoneNo }, // Filter criteria
+            '_id name address phoneNo cans totalCans deliverystatus', // Projection
+        )
+            .sort({ createdAt: -1 }) // Sort by createdAt field in descending order
+            .exec();
+
+        res.status(200).json({
+            status: true,
+            data: orders
+        });
+    }
+    catch (err) {
+
+    }
+})
+
+router.get('/re-order/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const order = await Order.findById(id);
+
+        const newOrder = {
+            totalCans: order.totalCans,
+            address: order.address,
+            phoneNo: order.phoneNo,
+            latitude: order.latitude,
+            longitude: order.longitude,
+            deliverystatus: 'Pending',
+        }
+        const createdOrder = await Order.create(newOrder);
+        console.log(createdOrder)
+
+        res.status(200).json({
+            status: true,
+            data: order
+        });
+    }
+    catch (err) {
+
+    }
+})
 
 
 
@@ -271,6 +318,7 @@ router.post('/Orders', async (req, res) => {
         await orders.save();
         res.status(201).send(orders);
     } catch (error) {
+        console.log(error)
         res.status(400).send(error);
     }
 });
