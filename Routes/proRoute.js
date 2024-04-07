@@ -1,71 +1,158 @@
 const express = require('express');
 const router = express.Router();
-const order = require('../Models/orderModel');
 const User = require('../Models/userModel');
+const Order = require('../Models/orderModel');
 const bcrypt = require('bcrypt');
 // const Token = require("../Models/tokenModel");
 // const nodemailer = require('nodemailer');
 // const JWT = require("jsonwebtoken");
 // require("dotenv").config();
 // const sendEmail = require("../utils/email/sendEmail");
-router.get('/reg', async (req,res) =>{
+router.get('/reg', async (req, res) => {
     try {
-        const { cans,address,phoneNo,name } = req.query;
+        const { cans, address, phoneNo, name } = req.query;
 
-        if (!cans){
-            return res.status(401).json({msg:'Pease enter your name.'})
+        if (!cans) {
+            return res.status(401).json({ msg: 'Pease enter your name.' })
         }
-        if(!address){
-            return res.status(401).json({msg:'Pease enter your address.'})
+        if (!address) {
+            return res.status(401).json({ msg: 'Pease enter your address.' })
         }
-        if(!phoneNo){
-            return res.status(401).json({msg:'Pease enter your phone number.'})
+        if (!phoneNo) {
+            return res.status(401).json({ msg: 'Pease enter your phone number.' })
         }
-        if(!name){
-            return res.status(401).json({msg:'Pease enter your date of birth.'})
+        if (!name) {
+            return res.status(401).json({ msg: 'Pease enter your date of birth.' })
         }
-        
-        
 
-        
 
         var newOrder = new order();
-            newOrder.cans =cans ;
-            newOrder.address = address;
-            newOrder.phoneNo = phoneNo;
-            newOrder.name = name;
-    
+        newOrder.cans = cans;
+        newOrder.address = address;
+        newOrder.phoneNo = phoneNo;
+        newOrder.name = name;
+
 
         await newOrder.save();
 
         res.status(200).json({
-            status:true,
-            msg:"Order created Successfully",
-            data:newOrder,
+            status: true,
+            msg: "Order created Successfully",
+            data: newOrder,
         })
         return;
-    }catch (e) {
-            console.log(e)
-            res.status(500).json({
-                status: false,
-                msg: 'Something went wrong!'
-            });
-        }
+    } catch (e) {
+        console.log(e)
+        res.status(500).json({
+            status: false,
+            msg: 'Something went wrong!'
+        });
+    }
 })
 
 router.get('/getadmin', async (req, res) => {
-    const orders = await order.find({}, 'name address phoneNo cans deliverystatus');
+    const orders = await Order.find({}, '_id name address phoneNo cans totalCans deliverystatus');
+
     res.status(200).json({
-        status:true,
+        status: true,
         data: orders
     });
 });
 
+// Route handlers for user actions, {fetch, edit, delete}
+router.get('/admin-users', async (req, res) => {
+    try {
+        const users = await User.find()
+        res.status(200).json({
+            status: true,
+            data: users
+        })
+    }
+    catch (error) {
+        console.log("🚀 ~ router.get ~ error:", error)
+        res.status(200).json({
+            status: false,
+        })
+    }
+})
+
+router.get('/delete-user', async (req, res) => {
+    try {
+        const userId = req.query.userId;
+        // Use the userId parameter in your logic
+
+        if (!userId)
+            return res.status(401).json({
+                status: false,
+                message: 'Invalid User ID'
+            })
+
+        const user = await User.findById(userId);
+        if (!user)
+            return res.status(404).json({
+                status: false,
+                message: 'User not found'
+            });
+
+        // Delete the user
+        await User.deleteOne({ _id: userId });
+
+        res.status(200).json({
+            status: true,
+            message: 'User deleted successfully'
+        });
+
+    }
+    catch (err) {
+        console.log("🚀 ~ router.get ~ err:", err)
+        res.status(200).json({
+            status: false,
+        })
+    }
+})
+
+router.post('/edit-user/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const { name, phoneNumber, email } = req.body;
+
+        // Find the user by ID
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                status: false,
+                message: 'User not found',
+            });
+        }
+
+        // Update user data
+        user.name = name;
+        user.phoneNumber = phoneNumber;
+        user.email = email;
+        await user.save();
+
+        // Respond with success message
+        res.status(200).json({
+            status: true,
+            message: 'User updated successfully',
+            data: user, // Optionally, you can send back the updated user data
+        });
+    } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).json({
+            status: false,
+            message: 'Failed to update user',
+        });
+    }
+});
+
+
+// Order related routes
 router.delete('/deleteOrder', async (req, res) => {
     const phoneNo = req.query.phoneNo;
 
     try {
-        const deletedOrder = await order.findOneAndDelete({ phoneNo: phoneNo });
+        const deletedOrder = await Order.findOneAndDelete({ phoneNo: phoneNo });
         if (deletedOrder) {
             return res.status(200).json({
                 status: true,
@@ -87,47 +174,67 @@ router.delete('/deleteOrder', async (req, res) => {
     }
 });
 
+router.post('/edit-order/:orderId', async (req, res) => {
+    try {
+      const orderId = req.params.orderId;
+      const editedData = req.body;
+  
+      // Update the order in the database using Mongoose
+      const updatedOrder = await Order.findByIdAndUpdate(orderId, editedData, { new: true });
+  
+      if (!updatedOrder) {
+        return res.status(404).json({ status: false, message: 'Order not found' });
+      }
+  
+      // Send a success response with the updated order
+      res.status(200).json({ status: true, data: updatedOrder });
+    } catch (error) {
+      console.error('Error updating order:', error);
+      res.status(500).json({ status: false, message: 'Internal server error' });
+    }
+  });
+
 
 
 
 router.post('/register', async (req, res) => {
     try {
-      const { name, phoneNumber, email, password } = req.body;
-      const existingUser = await User.findOne({ phoneNumber });
-      if (existingUser) {
-        return res.status(400).json({ error: 'UserExists', message: 'User with this phone number already exists' });
+        const { name, phoneNumber, email, password } = req.body;
+        const existingUser = await User.findOne({ phoneNumber });
+        if (existingUser) {
+            return res.status(400).json({ error: 'UserExists', message: 'User with this phone number already exists' });
 
-      }
-      const existingEmailUser = await User.findOne({ email });
+        }
+        const existingEmailUser = await User.findOne({ email });
 
-      if (existingEmailUser) {
-          return res.status(400).json({ error: 'UserExists', message: 'User with this email already exists.' });
-      }
+        if (existingEmailUser) {
+            return res.status(400).json({ error: 'UserExists', message: 'User with this email already exists.' });
+        }
 
-     
-      
 
-      const newUser = new User({
-        name,
-        phoneNumber,
-        email,
-        password,
-      });
-     
-  
-      await newUser.save();
-      res.status(200).send('User registration successful');
+
+
+        const newUser = new User({
+            name,
+            phoneNumber,
+            email,
+            password,
+        });
+
+
+        await newUser.save();
+        res.status(200).send('User registration successful');
     } catch (error) {
-      if (error.code === 11000 && error.keyPattern.email) {
-        // Duplicate key error, email already exists
-        res.status(400).send('Email is already in use');
-      } else if (error.code === 11000 && error.keyPattern.phoneNumber) {
-        // Duplicate key error, phone number already exists
-        res.status(400).send('Phone number is already in use');
-      } else {
-        console.error(error);
-        res.status(500).send('Error saving user to the database');
-      }
+        if (error.code === 11000 && error.keyPattern.email) {
+            // Duplicate key error, email already exists
+            res.status(400).send('Email is already in use');
+        } else if (error.code === 11000 && error.keyPattern.phoneNumber) {
+            // Duplicate key error, phone number already exists
+            res.status(400).send('Phone number is already in use');
+        } else {
+            console.error(error);
+            res.status(500).send('Error saving user to the database');
+        }
     }
 });
 
@@ -151,7 +258,7 @@ router.post('/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        
+
         res.json({ message: 'Login successful' });
     } catch (error) {
         console.error('Error during login:', error);
@@ -160,20 +267,20 @@ router.post('/login', async (req, res) => {
 });
 router.post('/Orders', async (req, res) => {
     try {
-      const orders = new order(req.body);
-      await orders.save();
-      res.status(201).send(orders);
+        const orders = new Order(req.body);
+        await orders.save();
+        res.status(201).send(orders);
     } catch (error) {
-      res.status(400).send(error);
+        res.status(400).send(error);
     }
-  });
-  
-  router.get('/', async (req, res) => {
+});
+
+router.get('/', async (req, res) => {
     try {
-      const orders = await order.find();
-      res.send(orders);
+        const orders = await Order.find();
+        res.send(orders);
     } catch (error) {
-      res.status(500).send(error);
+        res.status(500).send(error);
     }
-  });
+});
 module.exports = router;

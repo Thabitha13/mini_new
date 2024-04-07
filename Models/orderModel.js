@@ -21,6 +21,10 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  deliverystatus: {
+    type: String,
+    default: 'Pending'
+  },
   bookingDate: {
     type: Date,
     default: () => new Date().toISOString().split('T')[0] 

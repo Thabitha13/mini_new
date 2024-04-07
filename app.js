@@ -13,8 +13,8 @@ db.once('open', () => console.log('Connected to MongoDB'));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
-var user = require('./Routes/proRoute');
 
+var user = require('./Routes/proRoute');
 var verifyOtp = require('./Routes/otpRoute/otp');
 
 app.use(function (req, res, next) {
