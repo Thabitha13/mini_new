@@ -11,15 +11,15 @@ const mongoose = require("mongoose");
 
 const generateOTP = require("./generateotp");
 require("dotenv").config();
-const EMAIL="watergyspy@gmail.com"
-const PASSWORD="mpfh doov wdtl tgrg"
+const EMAIL = "watergyspy@gmail.com"
+const PASSWORD = "mpfh doov wdtl tgrg"
 
 let otp; // to store the generated OTP
 
 router.post("/sendOtp", async (req, res) => {
   console.log(req.body);
   let email = req.body.email;
-  const user = await User.findOne({email});
+  const user = await User.findOne({ email });
   if (!email) {
     return res.status(400).json({ msg: "Please provide an email address." });
   }
@@ -41,7 +41,7 @@ router.post("/sendOtp", async (req, res) => {
       otp: otp,
       createdAt: Date.now(),
     }).save();
-    
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       secure: true,
@@ -50,8 +50,8 @@ router.post("/sendOtp", async (req, res) => {
         pass: PASSWORD,
       },
     });
-   
-    
+
+
 
     var mailOptions = {
       from: `"No Reply" <${process.env.EMAIL}>`, // sender address
@@ -67,19 +67,21 @@ router.post("/sendOtp", async (req, res) => {
           .status(500)
           .json({ msg: "Error sending email. Please try again later." });
       } else {
-        
+
         console.log(`Message sent: ${info.messageId}`);
         req.session.email = email;
         res.json({ msg: "Password reset request sent successfully." });
       }
     });
+
+    return res.status(200).json({ msg: "OTP is sent to your email" });
   }
 });
 
 router.post("/verifyOtp", async (req, res) => {
   try {
     let cotp = req.body.otp;
-    
+
     console.log(otp);
     console.log(cotp);
     // Retrieve email from session
@@ -113,26 +115,27 @@ router.post("/verifyOtp", async (req, res) => {
 
 // Route to handle password reset form submission
 router.post("/reset-password", async (req, res) => {
-    try {
-        const { email, newpassword, confirmPassword } = req.body;
-        console.log("Email : ", email);
+  try {
+    const { email, newPassword, confirmPassword } = req.body;
+ 
+    console.log("Email : ", email);
 
-        // Check if passwords match
-        if (newpassword !== confirmPassword) {
-            return res.status(400).json({ msg: "Passwords do not match." });
-        }
-
-        // Hash the new password
-        const hashedPassword = await bcrypt.hash(newpassword, 10);
-
-        // Update user's password in the database
-        await User.findOneAndUpdate({ email }, { password: hashedPassword });
-
-        res.status(200).json({ msg: "Password updated successfully." });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: "Error resetting password." });
+    // Check if passwords match
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ msg: "Passwords do not match." });
     }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update user's password in the database
+    await User.findOneAndUpdate({ email }, { password: hashedPassword });
+
+    res.status(200).json({ msg: "Password updated successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Error resetting password." });
+  }
 });
 
 

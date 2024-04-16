@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
     <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <style>
-        #reset{
+        #reset {
             background: #117a8b;
         }
     </style>
 </head>
+
 <body>
     <div class="bg-light py-3 py-md-5">
         <div class="container">
@@ -32,27 +34,34 @@
                         <form id="resetPasswordForm">
                             <div class="row gy-3 gy-md-4 overflow-hidden">
                                 <div class="col-12">
-                                    <label for="otp" class="form-label">Enter OTP <span class="text-danger">*</span></label>
+                                    <label for="otp" class="form-label">Enter OTP <span
+                                            class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text">
                                             <!-- <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-shield-lock" viewBox="0 0 16 16"> -->
-                                                <path d="M6 1h4a2 2 0 0 1 2 2v2h1a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1h1V3a2 2 0 0 1 2-2zM4 6h8v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6z"/>
+                                            <path
+                                                d="M6 1h4a2 2 0 0 1 2 2v2h1a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a1 1 0 0 1 1-1h1V3a2 2 0 0 1 2-2zM4 6h8v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6z" />
                                             </svg>
                                         </span>
                                         <input type="text" class="form-control" name="otp" id="otp" required>
                                     </div>
                                 </div>
                                 <div class="col-12">
-                                    <label for="newPassword" class="form-label">New Password <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" name="newPassword" id="newPassword" required>
+                                    <label for="newPassword" class="form-label">New Password <span
+                                            class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" name="newPassword" id="newPassword"
+                                        required>
                                 </div>
                                 <div class="col-12">
-                                    <label for="confirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" required>
+                                    <label for="confirmPassword" class="form-label">Confirm Password <span
+                                            class="text-danger">*</span></label>
+                                    <input type="password" class="form-control" name="confirmPassword"
+                                        id="confirmPassword" required>
                                 </div>
                                 <div class="col-12">
                                     <div class="d-grid">
-                                        <button class="btn btn-primary btn-lg" id="reset" type="submit">Reset Password</button>
+                                        <button class="btn btn-primary btn-lg" id="reset" type="submit">Reset
+                                            Password</button>
                                     </div>
                                 </div>
                             </div>
@@ -73,68 +82,70 @@
     </div>
 
     <script>
-        document.getElementById('resetPasswordForm').addEventListener('submit', async function(event) {
+        document.getElementById('resetPasswordForm').addEventListener('submit', async function (event) {
             event.preventDefault(); // Prevent form submission
+            let email;
             document.addEventListener("DOMContentLoaded", function () {
-        // Check if session storage is supported by the browser
-        if (typeof Storage !== "undefined") {
-          // Retrieve the value from session storage
-          var email = sessionStorage.getItem("resetEmail");  
-        } else {
-          console.log("Session storage is not supported in this browser.");
-        }
-      });
+                // Check if session storage is supported by the browser
+                if (typeof Storage !== "undefined") {
+                    // Retrieve the value from session storage
+                    email = sessionStorage.getItem("resetEmail");
+                } else {
+                    console.log("Session storage is not supported in this browser.");
+                }
+            });
             // Get the values entered by the user
             const otp = document.getElementById('otp').value;
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-          // Make AJAX request to reset password
-try {
-    const response = await fetch('http://localhost:4000/verifyOtp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ otp }),
-    });
-    if (response.ok) {
-        const data = await response.json();
+            // Make AJAX request to reset password
+            try {
+                const response = await fetch('http://localhost:4000/verifyOtp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ otp }),
+                });
+                if (response.ok) {
+                    const data = await response.json();
 
-        // Display response message
-        alert(data.msg);
+                    // Display response message
+                    alert(data.msg);
 
-        // Retrieve email from session storage
-        const email = sessionStorage.getItem("resetEmail");
+                    // Retrieve email from session storage
+                    const email = sessionStorage.getItem("resetEmail");
 
-        // Make API call to reset password
-        const resetResponse = await fetch('http://localhost:4000/reset-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email,newPassword,confirmPassword }),
+                    // Make API call to reset password
+                    const resetResponse = await fetch('http://localhost:4000/reset-password', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ email, newPassword, confirmPassword }),
+                    });
+                    if (resetResponse.ok) {
+                        // Password reset successfully, display success message
+                        alert('Password reset successfully. Redirecting to login page.');
+                        // Redirect to login page
+                        window.location.href = 'login.html';
+                    } else {
+                        // Handle error resetting password
+                        alert('Error resetting password. Please try again later.');
+                    }
+                } else {
+                    // Handle error verifying OTP
+                    alert('Error verifying OTP. Please try again later.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error verifying OTP or resetting password. Please try again later.');
+            }
+
         });
-        if (resetResponse.ok) {
-            // Password reset successfully, display success message
-            alert('Password reset successfully. Redirecting to login page.');
-            // Redirect to login page
-            window.location.href = 'login.html';
-        } else {
-            // Handle error resetting password
-            alert('Error resetting password. Please try again later.');
-        }
-    } else {
-        // Handle error verifying OTP
-        alert('Error verifying OTP. Please try again later.');
-    }
-} catch (error) {
-    console.error('Error:', error);
-    alert('Error verifying OTP or resetting password. Please try again later.');
-}
 
-});         
-     
     </script>
 </body>
+
 </html>
