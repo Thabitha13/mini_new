@@ -79,9 +79,10 @@ router.post("/sendOtp", async (req, res) => {
 router.post("/verifyOtp", async (req, res) => {
   try {
     let cotp = req.body.otp;
+    
     console.log(otp);
     console.log(cotp);
-    const email = req.session.email; // Retrieve email from session
+    // Retrieve email from session
 
     // Find the token associated with the user and the provided OTP
     const token = await Token.findOne({ otp: cotp });
@@ -100,7 +101,7 @@ router.post("/verifyOtp", async (req, res) => {
 
     // If the OTP is valid and token has not expired, delete the token from the database
     await token.deleteOne();
-    res.redirect(`/reset-password?email=${encodeURIComponent(email)}`);
+    // res.redirect(`/reset-password?email=${encodeURIComponent(email)}`);
 
     return res.status(200).json({ msg: "OTP Verified!" });
   } catch (error) {
@@ -109,29 +110,20 @@ router.post("/verifyOtp", async (req, res) => {
   }
 });
 
-// Route to render the reset password page
-router.get("/reset-password", async (req, res) => {
-    try {
-        const email = req.query.email;
-        res.sendFile(__dirname + '/reset.html'); // Sending the HTML file
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: "Error rendering reset password page." });
-    }
-});
 
 // Route to handle password reset form submission
 router.post("/reset-password", async (req, res) => {
     try {
-        const { email, password, confirmPassword } = req.body;
+        const { email, newpassword, confirmPassword } = req.body;
+        console.log("Email : ", email);
 
         // Check if passwords match
-        if (password !== confirmPassword) {
+        if (newpassword !== confirmPassword) {
             return res.status(400).json({ msg: "Passwords do not match." });
         }
 
         // Hash the new password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(newpassword, 10);
 
         // Update user's password in the database
         await User.findOneAndUpdate({ email }, { password: hashedPassword });

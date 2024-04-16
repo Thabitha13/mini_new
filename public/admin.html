@@ -85,8 +85,6 @@
         flex-direction: row;
       }
       .sidebar {
-        /* background-color: white; */
-        /* margin-top: 30px; */
         width: 250px;
         border: none;
         border-radius: 10px;
@@ -119,7 +117,12 @@
     <header>
       <h1>Admin Portal</h1>
     </header>
-
+    <div class="form-group">
+      <label for="orderDate">Select Date:</label>
+      <input type="date" id="orderDate" class="form-control" />
+  </div>
+  <button class="btn btn-primary" onclick="getOrdersByDate()">Get Orders</button>
+  
     <div class="main-container">
       <div class="sidebar">
         <nav
@@ -242,7 +245,6 @@
             .then((response) => response.json())
             .then((data) => {
               console.log("Delete Response:", data);
-              // Refresh the table after deleting
               location.reload();
             })
             .catch((error) => {
@@ -257,7 +259,7 @@
         document.getElementById("editPhone").value = data.phoneNo || "";
         document.getElementById("editTotalCans").value = data.totalCans || "";
         document.getElementById("editDeliveryStatus").value =
-          data.deliverystatus || "pending"; // Set default value if not provided
+          data.deliverystatus || "pending"; 
         document.getElementById("orderId").value = data._id || "";
 
         const editDataModal = new bootstrap.Modal(
@@ -265,17 +267,15 @@
         );
         editDataModal.show();
       }
-      // Function to handle saving edited data
       function saveEditedData() {
         const editName = document.getElementById("editName").value;
         const editAddress = document.getElementById("editAddress").value;
         const editPhone = document.getElementById("editPhone").value;
         const editTotalCans = document.getElementById("editTotalCans").value;
         const editDeliveryStatus =
-          document.getElementById("editDeliveryStatus").value;
+        document.getElementById("editDeliveryStatus").value;
         const orderId = document.getElementById("orderId").value;
 
-        // Construct the data object to send in the fetch request
         const editedData = {
           name: editName,
           address: editAddress,
@@ -286,7 +286,6 @@
         };
         console.log("🚀 ~ saveEditedData ~ editedData:", editedData);
 
-        // Fetch API endpoint to update data
         fetch(`http://localhost:4000/edit-order/${editedData._id}`, {
           method: "POST",
           headers: {
@@ -296,24 +295,75 @@
         })
           .then((response) => response.json())
           .then((data) => {
-            // Handle response from server
             console.log("Response from server:", data);
-            // Close the modal after saving changes
             const editDataModal = new bootstrap.Modal(
               document.getElementById("editDataModal")
             );
             editDataModal.hide();
             window.location.reload();
-            // Reload or update the data in your UI as needed
           })
           .catch((error) => {
             console.error("Error updating order:", error);
-            // Optionally, display an error message to the user
           });
       }
+
+    function getOrdersByDate() {
+    const selectedDate = document.getElementById('orderDate').value;
+    const apiUrl = `http://localhost:4000/orders-by-date/${selectedDate}`;
+
+    fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+        .then((response) => response.json())
+        .then((responseData) => {
+            console.log('API Response:', responseData);
+
+            const orderListBody = document.getElementById("orderListBody");
+            orderListBody.innerHTML = ""; // Clear existing table content
+
+            if (Array.isArray(responseData.data) && responseData.data.length > 0) {
+                responseData.data.forEach((data) => {
+                    const row = document.createElement("tr");
+
+                    const columns = ["address", "phoneNo", "totalCans", "deliverystatus"];
+                    columns.forEach((column) => {
+                        const cell = document.createElement("td");
+                        cell.textContent = data[column];
+                        row.appendChild(cell);
+                    });
+
+                    const actionCell = document.createElement("td");
+                    const deleteButton = document.createElement("button");
+                    const editButton = document.createElement("button");
+
+                    deleteButton.textContent = "Delete";
+                    deleteButton.classList.add("btn", "btn-danger");
+                    deleteButton.addEventListener("click", () => handleDelete(data.phoneNo));
+
+                    editButton.textContent = "Edit";
+                    editButton.classList.add("btn", "btn-primary");
+                    editButton.addEventListener("click", () => openEditModal(data));
+
+                    actionCell.appendChild(deleteButton);
+                    actionCell.appendChild(editButton);
+
+                    row.appendChild(actionCell);
+                    orderListBody.appendChild(row);
+                });
+            } else {
+                // Display a message or handle empty data case
+                orderListBody.innerHTML = "<tr><td colspan='5'>No orders found for this date.</td></tr>";
+            }
+        })
+        .catch((error) => {
+            console.error('Error fetching orders by date:', error);
+        });
+}
     </script>
-    <!-- Bootstrap Modal for Editing Data -->
-    <!-- Bootstrap Modal for Editing Data -->
+    
     <div
       class="modal fade"
       id="editDataModal"
@@ -333,7 +383,6 @@
             ></button>
           </div>
           <div class="modal-body">
-            <!-- Form for editing data -->
             <form id="editDataForm">
               <input
                 disabled
@@ -406,8 +455,6 @@
                     <option value="pending">Pending</option>
                     <option value="delivered">Delivered</option>
                     <option value="cancelled">Cancelled</option>
-
-                    <!-- Add more options as needed -->
                   </select>
                 </div>
               </div>
@@ -424,8 +471,7 @@
             <button
               type="button"
               class="btn btn-primary"
-              onclick="saveEditedData()"
-            >
+              onclick="saveEditedData()">
               Save Changes
             </button>
           </div>

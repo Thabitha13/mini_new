@@ -3,67 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forget Password</title>
+    <title>Reset Password</title>
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            width: 50%;
-            margin: 100px auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            text-align: center;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input[type="email"],
-        input[type="text"],
-        input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            box-sizing: border-box;
-        }
-        .submit-buttons {
-            display: flex;
-            justify-content: space-between;
-        }
-        .submit-buttons input[type="submit"] {
-            flex: 1;
-            margin-right: 10px;
+        #reset{
+            background: #117a8b;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Forget Password</h2>
-        <form id="forgetPasswordForm" action="#" method="POST">
-            <label for="email">Enter your email:</label>
-            <input type="email" id="email" name="email" required>
-            <div class="submit-buttons">
-                <input type="submit" value="Send OTP" onclick="sendOTP()">
-                <input type="submit" value="Verify OTP" onclick="verifyOTP()">
+    <div class="bg-light py-3 py-md-5">
+        <div class="container">
+            <div class="row justify-content-md-center">
+                <div class="col-12 col-md-11 col-lg-8 col-xl-7 col-xxl-6">
+                    <div class="bg-white p-4 p-md-5 rounded shadow-sm">
+                        <div class="row gy-3 mb-5">
+                            <div class="col-12">
+                                <div class="text-center">
+                                    <a href="#!">
+                                        <img src="logo.jpeg" alt="BootstrapBrain Logo" width="170" height="170">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <h2 class="fs-6 fw-normal text-center text-secondary m-0 px-md-5">Provide the email address associated with your account to recover your password.</h2>
+                            </div>
+                        </div>
+                        <form onsubmit="resetPasswordForm()">
+                            <div class="row gy-3 gy-md-4 overflow-hidden">
+                                <div class="col-12">
+                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
+                                                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z" />
+                                            </svg>
+                                        </span>
+                                        <input type="email" class="form-control" name="email" id="email" required>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="d-grid">
+                                        <button class="btn btn-primary btn-lg" id="reset" type="submit" onsubmit="">Reset Password</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row">
+                            <div class="col-12">
+                                <hr class="mt-5 mb-4 border-secondary-subtle">
+                                <div class="d-flex gap-4 justify-content-center">
+                                    <a href="login.html" class="link-secondary text-decoration-none">Log In</a>
+                                    <a href="register.html" class="link-secondary text-decoration-none">Register</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 
     <script>
-       async function sendOTP() {
+         async function resetPasswordForm() {
+    event.preventDefault(); // Prevent form submission
+
+    // Get the email entered by the user
     const email = document.getElementById('email').value;
 
     try {
+        // Make AJAX request to send OTP
         const response = await fetch('http://localhost:4000/sendOtp', {
             method: 'POST',
             headers: {
@@ -71,20 +80,23 @@
             },
             body: JSON.stringify({ email }),
         });
+
         if (response.ok) {
-            const data = await response.json(); // Parse response body
-            alert(data.msg); // Access the message from the response
+            // Store email in session variable
+            sessionStorage.setItem('resetEmail', email);
+            alert('Password reset request sent successfully.');
+            // Redirect to reset.html
+            window.location.href = 'reset.html'; // Ensure correct path to reset.html
         } else {
-            console.error('Error:', error);
+            const data = await response.json();
+            alert(data.msg);
         }
     } catch (error) {
-        console.error('Error sending:', error);
+        console.error('Error:', error);
+        alert('Error sending password reset request. Please try again later.');
     }
 }
-        function verifyOTP() {
-            // Implement verification of OTP if needed
-            console.log('OTP verification function');
-        }
+
     </script>
 </body>
 </html>

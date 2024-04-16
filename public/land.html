@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gypsy Fresh Water</title>
+    <title>Varsh Fresh Water</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
     <style>
         body {
@@ -24,7 +25,6 @@
         .navbar-nav .nav-link {
             color: #fff !important;
         }
-
 
         .navbar-nav .nav-link:hover {
             color: #000 !important; 
@@ -62,18 +62,32 @@
             background-color: #117a8b;
             color: #fff;
             text-align: center;
+            padding: 20px 0;
         }
 
         .section-icon {
             margin-right: 8px;
         }
 
+        .price {
+            font-size: 30px;  
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            color: #02424b; 
+            margin-top: 10px; 
+        }
+
+        #map {
+            height: 500px; 
+            width: 50%;
+            margin-bottom: 20px; 
+            margin-left: 200px;
+        }
     </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark">
-    <a class="navbar-brand" href="#">GYPSY FRESH WATER</a>
+    <a class="navbar-brand" href="#">VARSH FRESH WATER</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -97,12 +111,12 @@
 </nav>
 
 <div id="home" class="container">
-    <img src="logo.jpeg" alt="Gypsy Water Supply Logo" class="logo">
+    <img src="logo.jpeg" alt="VARSH Water Supply Logo" class="logo">
 </div>
 
 <section id="about"></section>
 <div id="about" class="container features">
-    <h2>Why Choose Gypsy Fresh Water?</h2>
+    <h2>Why Choose Varsh Fresh Water?</h2>
     <div class="row">
         <div class="col-md-4">
             <div class="card">
@@ -129,6 +143,7 @@
             </div>
         </div>
     </div>
+    <pre class="price"> Price per can: Rs. 50</pre>
 </div>
 
 <section id="contact"></section>
@@ -144,13 +159,32 @@
     <p>Phone Number: xxxxxxxxxx</p>
 </div>
 
+<div class="container location">
+    <h2 class="location-heading" style="color: #117a8b;">Our Location</h2>
+    <p class="location-description">Visit us at Varsh Fresh Water,Kizhakombu,Koothatkulam,Ernakulam Pin 686662</p>
+</div>
+
+<div id="map"></div>
+
 <div class="footer">
-    <p>&copy; 2024 Gypsy Fresh Water <br> All rights reserved</p>
+    <p>&copy; 2024 Varsh Fresh Water <br> All rights reserved</p>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var map = L.map('map').setView([9.8724020, 76.5738390], 15);
+  
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+  
+    L.marker([9.8724020, 76.5738390]).addTo(map)
+      .bindPopup('<b>Varsh Fresh Water</b><br>Kizhakombu,Koothatkulam,</br><br>Ernakulam<br>Pin 686662')
+      .openPopup();
+</script>
 
 </body>
 </html>

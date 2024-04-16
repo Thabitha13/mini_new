@@ -64,7 +64,7 @@
       }
 
       .deleteButton {
-        background-color: #f44336;
+        background-color: #801b14;
         color: white;
         padding: 8px;
         border: none;
@@ -74,7 +74,7 @@
       }
 
       .deleteButton:hover {
-        background-color: #d32f2f;
+        background-color: #801b14;
       }
       .main-container {
         padding-top: 40px;
@@ -84,8 +84,6 @@
         flex-direction: row;
       }
       .sidebar {
-        /* background-color: white; */
-        /* margin-top: 30px; */
         width: 250px;
         border: none;
         border-radius: 10px;
@@ -136,14 +134,15 @@
                 class="list-group-item list-group-item-action py-2 ripple rounded"
                 aria-current="true"
               >
-                <i class="fas fa-tachometer-alt fa-fw me-3"></i
-                ><span>Orders</span>
+                <i class="fas fa-tachometer-alt fa-fw me-3"></i>
+                <span>Orders</span>
               </a>
               <a
                 href="admin-users.html"
                 class="list-group-item list-group-item-action py-2 ripple active rounded"
               >
-                <i class="fas fa-chart-area fa-fw me-3"></i><span>Users</span>
+                <i class="fas fa-chart-area fa-fw me-3"></i>
+                <span>Users</span>
               </a>
             </div>
           </div>
@@ -229,8 +228,6 @@
         const editUserPhone = document.getElementById("editUserPhone").value;
         const editUserEmail = document.getElementById("editUserEmail").value;
 
-        // Here you can make a fetch request to update the user with the edited data
-        // Example:
        
         fetch(`http://localhost:4000/edit-user/${editUserId}`, {
             method: 'POST',
@@ -245,13 +242,11 @@
         })
         .then(response => response.json())
         .then(data => {
-            // Handle response
             window.location.reload();
 
         })
         .catch(error => console.error('Error updating user:', error));
 
-        // Close the modal after saving changes
         const editUserModal = new bootstrap.Modal(
           document.getElementById("editUserModal")
         );
@@ -259,8 +254,6 @@
       }
     </script>
 
-    <!--User delete Modal -->
-    <!-- Bootstrap Modal -->
     <div
       class="modal fade"
       id="editUserModal"
@@ -280,7 +273,6 @@
             ></button>
           </div>
           <div class="modal-body">
-            <!-- Form for editing user details -->
             <form id="editUserForm">
               <div class="row mb-3">
                 <label for="editUserName" class="col-sm-3 col-form-label"
@@ -306,7 +298,6 @@
                   <input type="email" class="form-control" id="editUserEmail" />
                 </div>
               </div>
-              <!-- Hidden input for user ID -->
               <input type="hidden" id="editUserId" />
             </form>
           </div>

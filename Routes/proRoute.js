@@ -331,4 +331,23 @@ router.get('/', async (req, res) => {
         res.status(500).send(error);
     }
 });
+
+router.get('/orders-by-date/:date', async (req, res) => {
+    try {
+        const selectedDate = req.params.date;
+        const orders = await Order.find({ bookingDate: selectedDate })
+            .sort({ createdAt: -1 }) // Sort orders by createdAt field in descending order
+            .exec();
+
+        res.status(200).json({
+            status: true,
+            data: orders
+        });
+    } catch (error) {
+        console.error('Error fetching orders by date:', error);
+        res.status(500).json({ status: false, message: 'Internal server error' });
+    }
+});
+
+
 module.exports = router;
