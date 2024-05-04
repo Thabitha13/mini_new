@@ -113,6 +113,7 @@
             <label for="confirmPassword">Confirm Password</label>
             <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
             <span class="error-message" id="passwordMatchError"></span>
+            <span class >passwordRegError</span>
         </div>
         <button type="submit" class="btn btn-block submit-btn">Submit</button>
     </form>
@@ -193,17 +194,17 @@
             }
 
             if (!phoneNumberRegex.test(phoneNumberInput.value.trim())) {
-                alert('Phone number should be 10 digits');
+                phoneNumberError.textContent = 'Phone No should be of 10 digits';
                 return false;
             }
 
             if (!emailRegex.test(emailInput.value.trim())) {
-                alert('Invalid email address');
+                emailError.textContent = 'Enter a valid Email-Id';
                 return false;
             }
 
             if (!passwordRegex.test(passwordInput.value)) {
-                alert('Password must be at least 8 characters long and contain at least one digit, one letter, and one special character.');
+                passwordRegError.textContent = 'Passwords do not match';
                 return false;
             }
 

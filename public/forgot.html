@@ -131,7 +131,7 @@
             sessionStorage.setItem("resetEmail", email);
             alert("Password reset request sent successfully.");
             // Redirect to reset.html
-            window.location.href = "/reset.html"; // Ensure correct path to reset.html
+            window.location.href = "reset.html"; // Ensure correct path to reset.html
           } else {
             const data = await response.json();
             alert(data.msg);

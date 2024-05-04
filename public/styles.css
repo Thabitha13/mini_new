@@ -74,11 +74,12 @@
   
   .card .logo {
     position: absolute;
-    top: 30px;
+    top: 10px;
     left: 50%;
     translate: -50% 0;
     width: 100px;
     height: 100px;
+    border-radius: 50%;
   }
   
   .card > h4 {
