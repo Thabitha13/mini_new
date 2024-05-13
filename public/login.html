@@ -1,46 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <title>Login page</title>
-        <link rel="stylesheet" href="styles.css">
-      </head>
-      
-      <body>
-        <div class="background"></div>
-        <div class="card">
-          <img class="logo" src="logo.jpeg">
-          <h2>Login</h2>
-          <form class="form" onsubmit="submitLoginForm()">
-            
-            <input type="text" id="username" name="username" placeholder="Username/Phone Number">
+<head>
+    <title>Login page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="background"></div>
+    <div class="card">
+        <img class="logo" src="logo.jpeg">
+        <h2>Login</h2>
+        <form class="form" onsubmit="submitLoginForm()">
+
+            <input type="text" id="username" name="username" placeholder="Phone Number">
             <span id="username-error" class="error"></span>
             <input type="password" id="password" name="password" placeholder="Password">
             <span id="password-error" class="error"></span>
-            
+
             <div class="forget-password-link">
-                <a href="forgot.html">Forgot Password?</a>
+                <a href="forgot.html" id="forgot-password-link">Forgot Password?</a>
             </div>
             <div class="forget-password-link">
                 Not a User?
                 <a href="register.html">Sign-Up</a>
             </div>
-            <button >Submit</button>
-          </form>
-      
-          
-        </div>
-      </body>
-      
-        <script>
-            async function submitLoginForm() {
-                const username = document.getElementById("username").value;
-                const password = document.getElementById("password").value;
-                event.preventDefault();
-                // if (username === "admin" && password === "admin123") {
-                //     window.location.href = 'admin.html';
-                // } else {
-                    try {
+            <button>Submit</button>
+        </form>
+
+
+    </div>
+
+    <script>
+        async function submitLoginForm() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            event.preventDefault();
+            
+            // Check if the username field is not empty
+           
+                try {
                     const response = await fetch('http://localhost:4000/login', {
                         method: 'POST',
                         headers: {
@@ -50,12 +49,14 @@
                     });
 
                     if (response.ok) {
-                        
+
                         const data = await response.json();
                         if (data.role === 'admin') {
                             window.location.href = 'admin.html';
                         } else {
+                            // Store username (phone number) in session storage
                             sessionStorage.setItem("userPhone", username);
+                            sessionStorage.setItem("token", data.token);
                             window.location.href = 'test.html';
                             console.log('Login successful for normal user');
 
@@ -68,8 +69,51 @@
                 } catch (error) {
                     console.error('Error during login:', error);
                 }
-            // }       
+            //  else {
+            //     // Show error message for empty username field
+            //     document.getElementById("username-error").innerText = "Username is required.";
+            //     document.getElementById("username-error").style.display = "block";
+            // }
+        
         }
+        
+        // Add event listener to forgot password link
+        document.getElementById("forgot-password-link").addEventListener("click", function(event) {
+            const username = document.getElementById("username").value;
+            if (username.trim() !== "") {
+
+            // Store username (phone number) in session storage before redirecting
+            sessionStorage.setItem("tempUserPhone", username);
+            window.location.href= 'forgot.html'
+            }
+            else 
+            {
+                alert("please enter a valid phone number")
+                event.preventDefault();
+            }
+        });
+        // Function to prevent backward navigation after logout
+function preventBackwardNavigation() {
+    const token = sessionStorage.getItem("token");
+    if (token) {
+        window.location.href = "test.html";
+    }
+
+    window.addEventListener("popstate", function () {
+        if (token) {
+            window.location.href = "test.html";
+        }
+        else {
+            // If the user navigates back to the login page after logging out, clear the browser's history
+            // window.history.forward(); // Clear forward history
+            window.location.href = "login.html"; // Change "dashboard.html" to the appropriate page
+        }
+    });
+}
+
+// Call preventBackwardNavigation() function on pages where backward navigation should be prevented
+preventBackwardNavigation();
     </script>
 </body>
+
 </html>

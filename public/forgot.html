@@ -112,7 +112,10 @@
     <script>
       async function resetPasswordForm() {
         event.preventDefault(); // Prevent form submission
-
+        if (typeof Storage !== "undefined") {
+          // Retrieve the value from session storage
+          var userPhone = sessionStorage.getItem("tempUserPhone");
+        }
         // Get the email entered by the user
         const email = document.getElementById("email").value;
 
@@ -123,7 +126,7 @@
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ email ,userPhone}),
           });
 
           if (response.ok) {

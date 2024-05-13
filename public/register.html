@@ -108,12 +108,13 @@
         <div class="form-group">
             <label for="password">Password</label>
             <input type="password" class="form-control" id="password" name="password" required>
+            <span class="error-message" id="passwordRegError"></span>
         </div>
         <div class="form-group">
             <label for="confirmPassword">Confirm Password</label>
             <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
             <span class="error-message" id="passwordMatchError"></span>
-            <span class >passwordRegError</span>
+            
         </div>
         <button type="submit" class="btn btn-block submit-btn">Submit</button>
     </form>
@@ -178,10 +179,12 @@
             const phoneNumberError = document.getElementById('phoneNumberError');
             const emailError = document.getElementById('emailError');
             const passwordMatchError = document.getElementById('passwordMatchError');
+            const passwordRegError = document.getElementById('passwordRegError');
 
             phoneNumberError.textContent = '';
             emailError.textContent = '';
             passwordMatchError.textContent = '';
+            passwordRegError.textContent= '';
 
             const nameRegex = /^[a-zA-Z\s]*$/;
             const phoneNumberRegex = /^\d{10}$/;
@@ -204,7 +207,7 @@
             }
 
             if (!passwordRegex.test(passwordInput.value)) {
-                passwordRegError.textContent = 'Passwords do not match';
+                passwordRegError.textContent = 'Password must contain a capital letter, digit, a special character and must be of length 8';
                 return false;
             }
 

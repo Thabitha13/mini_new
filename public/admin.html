@@ -116,6 +116,7 @@
   <body>
     <header>
       <h1>Admin Portal</h1>
+      <button id="logoutButton">Logout</button>
     </header>
     <div class="form-group">
       <label for="orderDate">Select Date:</label>
@@ -170,6 +171,33 @@
     </div>
 
     <script>
+        // Function to log out the user
+        function logout() {
+            // Remove token from session storage
+            sessionStorage.removeItem('token');
+            // Redirect to login page
+            window.location.href = 'login.html';
+        }
+
+        // Add event listener to the logout button
+        document.getElementById('logoutButton').addEventListener('click', logout);
+
+        // Function to prevent backward navigation
+        function preventBackwardNavigation() {
+            const token = sessionStorage.getItem("token");
+            if (!token) {
+                window.location.href = "login.html";
+            }
+
+            window.addEventListener("popstate", function () {
+                if (!token) {
+                    window.location.href = "login.html";
+                }
+            });
+        }
+
+        // Call preventBackwardNavigation() function
+        preventBackwardNavigation();
       const apiUrl = "http://localhost:4000/getadmin";
 
       fetch(apiUrl, {
@@ -255,7 +283,6 @@
       }
 
       function openEditModal(data) {
-        document.getElementById("editName").value = data.name || "";
         document.getElementById("editAddress").value = data.address || "";
         document.getElementById("editPhone").value = data.phoneNo || "";
         document.getElementById("editTotalCans").value = data.totalCans || "";
@@ -269,7 +296,7 @@
         editDataModal.show();
       }
       function saveEditedData() {
-        const editName = document.getElementById("editName").value;
+        // const editName = document.getElementById("editName").value;
         const editAddress = document.getElementById("editAddress").value;
         const editPhone = document.getElementById("editPhone").value;
         const editTotalCans = document.getElementById("editTotalCans").value;
@@ -278,7 +305,7 @@
         const orderId = document.getElementById("orderId").value;
 
         const editedData = {
-          name: editName,
+          // name: editName,
           address: editAddress,
           phoneNo: editPhone,
           totalCans: editTotalCans,
@@ -391,7 +418,7 @@
                 class="form-control hidden"
                 id="orderId"
               />
-              <div class="row mb-3">
+              <!-- <div class="row mb-3">
                 <div class="col-md-4">
                   <label for="editName" class="form-label">Name</label>
                 </div>
@@ -403,7 +430,7 @@
                     id="editName"
                   />
                 </div>
-              </div>
+              </div> -->
               <div class="row mb-3">
                 <div class="col-md-4">
                   <label for="editAddress" class="form-label">Address</label>

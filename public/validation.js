@@ -73,6 +73,13 @@ document.getElementById('orderForm').addEventListener('submit', async function (
     if (response.ok) {
       console.log('Order submitted successfully');
       alert('Booking successful! Your order has been placed.');
+        // Store relevant data in session storage
+  sessionStorage.setItem('address', formDataJson.address);
+  sessionStorage.setItem('numberOfCans', formDataJson.totalCans);
+
+  // Call the displayInvoice function
+  displayInvoice();
+
     } else {
       console.error('Order submission failed:', response.statusText);
       alert('Booking failed. Please try again later.');
@@ -80,6 +87,27 @@ document.getElementById('orderForm').addEventListener('submit', async function (
   } catch (error) {
     console.error('An error occurred during order submission:', error);
     alert('An error occurred. Please try again later.');
+  }
+  function displayInvoice() {
+    const address = sessionStorage.getItem('address');
+    const numberOfCans = sessionStorage.getItem('numberOfCans');
+  
+    // Construct the URL with query parameters
+    const url = `/generate-invoice?address=${encodeURIComponent(address)}&numberOfCans=${encodeURIComponent(numberOfCans)}`;
+  
+    // Fetch generated invoice PDF from server
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        // Create object URL for the PDF blob
+        const blobUrl = URL.createObjectURL(blob);
+  
+        // Display PDF in iframe
+        const iframe = document.createElement('iframe');
+        iframe.src = blobUrl;
+        document.body.appendChild(iframe);
+      })
+      .catch((error) => console.error('Error:', error));
   }
 });
 

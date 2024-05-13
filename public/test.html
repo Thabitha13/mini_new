@@ -41,6 +41,7 @@
         <div class="navbar-nav">
           <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
           <a class="nav-item nav-link" href="orders.html">Orders</a>
+          <a class="nav-item nav-link" onclick="logout()">Log Out</a>
           <!-- <a class="nav-item nav-link" href="#">Pricing</a>
           <a class="nav-item nav-link disabled" href="#">Disabled</a> -->
         </div>
@@ -147,6 +148,7 @@
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
+        preventBackwardNavigation();
         // Check if session storage is supported by the browser
         if (typeof Storage !== "undefined") {
           // Retrieve the value from session storage
@@ -160,6 +162,32 @@
           console.log("Session storage is not supported in this browser.");
         }
       });
+  // Logout function
+  function logout() {
+            sessionStorage.removeItem("token");
+            window.location.href = "login.html";
+        }
+      function preventBackwardNavigation() {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+        window.location.href = "login.html";
+    }
+
+    window.addEventListener("popstate", function () {
+        if (!token) {
+            window.location.href = "login.html";
+        }
+        else {
+            // If the user navigates back to the login page after logging out, clear the browser's history
+            window.history.forward(); // Clear forward history
+            window.location.href = "login.html"; // Change "dashboard.html" to the appropriate page
+        }
+    });
+}
+
+
+// Call preventBackwardNavigation() function on pages where backward navigation should be prevented
+preventBackwardNavigation();
 
       function getCoordinates() {
         const address = document.getElementById("address").value;
@@ -192,6 +220,7 @@
             alert("An error occurred while retrieving coordinates.");
           });
       }
+     
     </script>
   </body>
 </html>

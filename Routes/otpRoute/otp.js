@@ -19,13 +19,12 @@ let otp; // to store the generated OTP
 router.post("/sendOtp", async (req, res) => {
   console.log(req.body);
   let email = req.body.email;
-  const user = await User.findOne({ email });
-  if (!email) {
-    return res.status(400).json({ msg: "Please provide an email address." });
-  }
-  const checkMail = await User.findOne({ email });
-  if (!checkMail) {
-    return res.status(400).json({ msg: "Email not registered" });
+  let phone = req.body.userPhone;
+  const user = await User.findOne({ email, phone });
+  
+  // If no user is found, return a 400 status with a message
+  if (!user) {
+    return res.status(400).json({ msg: "Email not registered with this phone number" });
   } else {
     // let token = await Token.findOne({userId: user._id});
     // if (token) await token.deleteOne();
