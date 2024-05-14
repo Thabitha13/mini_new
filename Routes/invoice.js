@@ -3,7 +3,7 @@ const PDFDocument = require("pdfkit");
 const fs = require("fs");
 
 const generateInvoice = async (order, user) => {
-  const pdfDoc = new PDFDocument({ margins: { top: 50, bottom: 50, left: 50, right: 50 } });
+  const pdfDoc = new PDFDocument({ size: "A4", margin: 50 });
   const orderId = order._id.toString();
   const pdfFilePath = `./${orderId}-bill.pdf`;
   pdfDoc.pipe(fs.createWriteStream(pdfFilePath));
@@ -11,80 +11,170 @@ const generateInvoice = async (order, user) => {
   // Register the font with the rupee symbol
   pdfDoc.registerFont("NotoSans", "NotoSans-Regular.ttf");
 
-  // Add logo
-  const logoPath = "logo.jpeg"; // Replace with the actual path to your logo file
-  const logo = pdfDoc.openImage(logoPath);
-  pdfDoc.image(logo, 50, 50, { width: 100 }); // Adjust logo size and position as needed
-
-  // Add border
-  pdfDoc.rect(0, 0, pdfDoc.page.width, pdfDoc.page.height).stroke();
-
-  pdfDoc.moveDown(3);
-
-  // Title
-  pdfDoc.font("NotoSans");
-  pdfDoc.fontSize(24);
-  pdfDoc.text("Invoice", { align: "center" });
-
-  pdfDoc.moveDown();
-
-  // Set up fonts and styles for regular text
-  pdfDoc.fontSize(12);
-
-  // Order details
-  pdfDoc.text(`Order ID: ${orderId}`);
-  pdfDoc.text(`Accepted At: ${new Date().toLocaleDateString()}`);
-  pdfDoc.text(`Customer: ${user.name}`);
-  pdfDoc.text(`Email: ${user.email}`);
-
-  pdfDoc.moveDown();
-
-  // Create table headers and data
-  const tableHeaders = ["Item", "Quantity", "Total"];
-  const tableWidths = [120, 80, 100]; // Adjust column widths as needed
-  const tableData = [["Water Can", order.totalCans, `₹${(order.totalCans * 50).toFixed(2)}`]];
-
-  // Draw the table
-  drawTable(pdfDoc, tableHeaders, tableWidths, tableData);
+  generateHeader(pdfDoc);
+  generateCustomerInformation(pdfDoc, order, user);
+  generateInvoiceTable(pdfDoc, order);
+  generateFooter(pdfDoc);
 
   pdfDoc.end();
   return pdfFilePath;
 };
 
-// Helper function to draw a table
-function drawTable(doc, headers, widths, data) {
-  const headerHeight = 15;
-  const rowHeight = 15;
-  const borderWidth = 1;
+function generateHeader(doc) {
+  doc
+    .image("logo.jpeg", 50, 45, { width: 50 }) // Replace with your logo path
+    .fillColor("#444444")
+    .font("NotoSans")
+    .fontSize(20)
+    .text("Varsh Waters", 110, 57) // Company name
+    .fontSize(10)
+    .text("Kizhakombu Koothatkulam", 200, 50, { align: "right" }) // Sender's address
+    .text("Ernakulam Pin 686662", 200, 65, { align: "right" })
+    .moveDown();
+}
 
-  // Draw header row
-  const startY = doc.y;
+function generateCustomerInformation(doc, order, user) {
+  doc
+    .fillColor("#444444")
+    .fontSize(20)
+    .text("Invoice", 50, 160);
+
+  generateHr(doc, 185);
+
+  const customerInformationTop = 200;
+
+  doc
+    .fontSize(10)
+    .text("Order ID:", 50, customerInformationTop)
+    .font("NotoSans")
+    .text(order._id.toString(), 150, customerInformationTop)
+    .font("NotoSans")
+    .text("Accepted At:", 50, customerInformationTop + 15)
+    .text(formatDate(new Date()), 150, customerInformationTop + 15)
+    .text("Balance Due:", 50, customerInformationTop + 30)
+    .text(
+      formatCurrency((order.totalCans * 50).toFixed(2)),
+      150,
+      customerInformationTop + 30
+    )
+
+    .font("NotoSans")
+    .text(user.name, 300, customerInformationTop)
+    .font("NotoSans")
+    .text(user.email, 300, customerInformationTop + 15)
+    .moveDown();
+
+  generateHr(doc, 252);
+}
+
+function generateInvoiceTable(doc, order) {
+  const invoiceTableTop = 330;
+
   doc.font("NotoSans");
-  doc.fontSize(12);
-  headers.forEach((header, i) => {
-    const x = widths.slice(0, i).reduce((sum, w) => sum + w, 0);
-    doc.text(header, x + borderWidth, startY + borderWidth, { width: widths[i] - borderWidth * 2 });
-  });
-  doc.moveDown(headerHeight);
+  generateTableRow(
+    doc,
+    invoiceTableTop,
+    "Item",
+    "Description",
+    "Unit Cost",
+    "Quantity",
+    "Line Total"
+  );
+  generateHr(doc, invoiceTableTop + 20);
+  doc.font("NotoSans");
 
-  // Draw data rows
-  data.forEach((row) => {
-    row.forEach((cell, i) => {
-      const x = widths.slice(0, i).reduce((sum, w) => sum + w, 0);
-      doc.text(cell.toString(), x + borderWidth, doc.y + borderWidth, { width: widths[i] - borderWidth * 2, align: "right" });
-    });
-    doc.moveDown(rowHeight);
-  });
+  const item = {
+    item: "Water Can",
+    description: "1 Litre",
+    amount: order.totalCans * 50,
+    quantity: order.totalCans,
+  };
+  const position = invoiceTableTop + 30;
+  generateTableRow(
+    doc,
+    position,
+    item.item,
+    item.description,
+    formatCurrency(50),
+    item.quantity,
+    formatCurrency(item.amount)
+  );
 
-  // Draw table borders
-  const endY = doc.y;
-  doc.lineWidth(borderWidth);
-  headers.forEach((_, i) => {
-    const x = widths.slice(0, i).reduce((sum, w) => sum + w, 0);
-    doc.moveTo(x, startY).lineTo(x, endY).stroke();
-  });
-  doc.moveTo(0, startY).lineTo(widths.reduce((sum, w) => sum + w, 0), startY).stroke();
-  doc.moveTo(0, endY).lineTo(widths.reduce((sum, w) => sum + w, 0), endY).stroke();
+  generateHr(doc, position + 20);
+
+  const totalPosition = position + 30;
+  generateTableRow(
+    doc,
+    totalPosition,
+    "",
+    "",
+    "Total",
+    "",
+    formatCurrency(item.amount)
+  );
+
+  const duePosition = totalPosition + 25;
+  doc.font("NotoSans");
+  generateTableRow(
+    doc,
+    duePosition,
+    "",
+    "",
+    "Balance Due",
+    "",
+    formatCurrency(item.amount)
+  );
+  doc.font("NotoSans");
+}
+
+function generateFooter(doc) {
+  doc
+    .fontSize(10)
+    .text(
+      "Payment is due within 15 days. Thank you for your business.",
+      50,
+      600,
+      { align: "center", width: 500 }
+    );
+}
+
+function generateTableRow(
+  doc,
+  y,
+  item,
+  description,
+  unitCost,
+  quantity,
+  lineTotal
+) {
+  doc
+    .fontSize(10)
+    .text(item, 50, y)
+    .text(description, 150, y)
+    .text(unitCost, 280, y, { width: 90, align: "right" })
+    .text(quantity, 370, y, { width: 90, align: "right" })
+    .text(lineTotal, 0, y, { align: "right" });
+}
+
+function generateHr(doc, y) {
+  doc
+    .strokeColor("#aaaaaa")
+    .lineWidth(1)
+    .moveTo(50, y)
+    .lineTo(550, y)
+    .stroke();
+}
+
+function formatCurrency(cents) {
+  return "₹" + cents;
+}
+
+function formatDate(date) {
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+
+  return year + "/" + month + "/" + day;
 }
 
 // Create a Nodemailer transporter

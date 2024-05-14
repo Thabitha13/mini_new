@@ -129,47 +129,46 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const registrationForm = document.getElementById('registrationForm');
+    const registrationForm = document.getElementById('registrationForm');
 
-        registrationForm.addEventListener('submit', async function (event) {
-            event.preventDefault();
+    registrationForm.addEventListener('submit', async function (event) {
+      event.preventDefault();
 
-            if (!validateForm()) {
-                return;
-            }
+      if (!validateForm()) {
+        return;
+      }
 
-            const formData = new FormData(this);
-            const userData = {};
+      const formData = new FormData(this);
+      const userData = {};
 
-            formData.forEach((value, key) => {
-                userData[key] = value;
-            });
+      formData.forEach((value, key) => {
+        userData[key] = value;
+      });
 
-            try {
-                const response = await fetch('http://localhost:4000/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(userData),
-                });
-
-                if (response.ok) {
-                    alert('User registration successful.');
-
-                } else {
-                    const errorData = await response.json();
-                    if (errorData.error === 'UserExists') {
-                        alert(errorData.message);
-                    } else {
-                        alert(`Error registering user: ${errorData.message}`);
-                    }
-                }
-            } catch (error) {
-                console.error(error);
-            }
+      try {
+        const response = await fetch('http://localhost:4000/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(userData),
         });
 
+        if (response.ok) {
+          alert('User registration successful. Your email has been verified.');
+        } else {
+          const errorData = await response.json();
+          if (errorData.error === 'UserExists') {
+            alert(errorData.message); // Existing user error message
+          } else {
+            alert(`Error registering user: ${errorData.message}`); // Other errors
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        alert('An error occurred during registration. Please try again later.'); // Generic error message
+      }
+    });
         function validateForm() {
             const nameInput = document.getElementById('name');
             const phoneNumberInput = document.getElementById('phoneNumber');
