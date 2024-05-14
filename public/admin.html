@@ -179,25 +179,7 @@
             window.location.href = 'login.html';
         }
 
-        // Add event listener to the logout button
-        document.getElementById('logoutButton').addEventListener('click', logout);
-
-        // Function to prevent backward navigation
-        function preventBackwardNavigation() {
-            const token = sessionStorage.getItem("token");
-            if (!token) {
-                window.location.href = "login.html";
-            }
-
-            window.addEventListener("popstate", function () {
-                if (!token) {
-                    window.location.href = "login.html";
-                }
-            });
-        }
-
-        // Call preventBackwardNavigation() function
-        preventBackwardNavigation();
+        // 
       const apiUrl = "http://localhost:4000/getadmin";
 
       fetch(apiUrl, {
