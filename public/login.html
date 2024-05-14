@@ -53,9 +53,14 @@
                         const data = await response.json();
                         role= data.role;
                         if (data.role === 'admin') {
+                             // Store username (phone number) in session storage
+                             sessionStorage.setItem("role",role);
+                             sessionStorage.setItem("userPhone", username);
+                            sessionStorage.setItem("token", data.token);
                             window.location.href = 'admin.html';
                         } else {
                             // Store username (phone number) in session storage
+                            sessionStorage.setItem("role",role);
                             sessionStorage.setItem("userPhone", username);
                             sessionStorage.setItem("token", data.token);
                             window.location.href = 'test.html';
@@ -91,31 +96,37 @@
         // Function to prevent backward navigation after logout
 function preventBackwardNavigation() {
     const token = sessionStorage.getItem("token");
+    const role = sessionStorage.getItem("role");
     if (token) {
-        if(role=='admin'){
-            window.location.href = "admin.html";
+       if(role=='admin')
+       {
+            window.location.href = 'admin.html';
         }
-        else{
-            window.location.href = "test.html";
+        else
+        {
+                window.location.href='test.html'
         }
        
     }
 
     window.addEventListener("popstate", function () {
         if (token) {
-            if(role=='admin'){
-            window.location.href = "admin.html";
+            if(role=='admin')
+            {
+            window.location.href = 'admin.html';
         }
-        else{
-            window.location.href = "test.html";
+        else
+        {
+                window.location.href='test.html'
         }
+        
         }
         else {
             
-            window.location.href = "login.html"; // Change "dashboard.html" to the appropriate page
+            window.location.href = 'login.html'; // Change "dashboard.html" to the appropriate page
         }
     });
-}
+
 
 // Call preventBackwardNavigation() function on pages where backward navigation should be prevented
 preventBackwardNavigation();
