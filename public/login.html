@@ -51,6 +51,7 @@
                     if (response.ok) {
 
                         const data = await response.json();
+                        role= data.role;
                         if (data.role === 'admin') {
                             window.location.href = 'admin.html';
                         } else {
@@ -69,12 +70,7 @@
                 } catch (error) {
                     console.error('Error during login:', error);
                 }
-            //  else {
-            //     // Show error message for empty username field
-            //     document.getElementById("username-error").innerText = "Username is required.";
-            //     document.getElementById("username-error").style.display = "block";
-            // }
-        
+         
         }
         
         // Add event listener to forgot password link
@@ -96,16 +92,26 @@
 function preventBackwardNavigation() {
     const token = sessionStorage.getItem("token");
     if (token) {
-        window.location.href = "test.html";
+        if(role=='admin'){
+            window.location.href = "admin.html";
+        }
+        else{
+            window.location.href = "test.html";
+        }
+       
     }
 
     window.addEventListener("popstate", function () {
         if (token) {
+            if(role=='admin'){
+            window.location.href = 'admin.html";
+        }
+        else{
             window.location.href = "test.html";
         }
+        }
         else {
-            // If the user navigates back to the login page after logging out, clear the browser's history
-            // window.history.forward(); // Clear forward history
+            
             window.location.href = "login.html"; // Change "dashboard.html" to the appropriate page
         }
     });

@@ -11,16 +11,16 @@ const mongoose = require("mongoose");
 
 const generateOTP = require("./generateotp");
 require("dotenv").config();
-const EMAIL = "watergyspy@gmail.com"
-const PASSWORD = "mpfh doov wdtl tgrg"
+const EMAIL = "varshwaters@gmail.com"
+const PASSWORD = "xmnt ikbd dkut knzo"
 
 let otp; // to store the generated OTP
 
 router.post("/sendOtp", async (req, res) => {
   console.log(req.body);
   let email = req.body.email;
-  let phone = req.body.userPhone;
-  const user = await User.findOne({ email, phone });
+  let phoneNumber = req.body.userPhone;
+  const user = await User.findOne({ $and: [{ phoneNumber }, { email }] });
   
   // If no user is found, return a 400 status with a message
   if (!user) {

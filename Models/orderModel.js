@@ -5,7 +5,14 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  address: {
+  city: {
+    type: String,
+    required: true,
+  },
+  houseNo: {
+    type: String,
+  },
+  pincode: {
     type: String,
     required: true,
   },

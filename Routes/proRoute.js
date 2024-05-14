@@ -4,50 +4,9 @@ const User = require('../Models/userModel');
 const Order = require('../Models/orderModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const easyinvoice = require('easyinvoice');
+const { generateInvoice, sendInvoiceEmail } = require('./invoice');
 const secretKey = process.env.JWT_SECRET;
 
-// router.get('/reg', async (req, res) => {
-//     try {
-//         const { cans, address, phoneNo, name } = req.query;
-
-//         if (!cans) {
-//             return res.status(401).json({ msg: 'Pease enter your name.' })
-//         }
-//         if (!address) {
-//             return res.status(401).json({ msg: 'Pease enter your address.' })
-//         }
-//         if (!phoneNo) {
-//             return res.status(401).json({ msg: 'Pease enter your phone number.' })
-//         }
-//         if (!name) {
-//             return res.status(401).json({ msg: 'Pease enter your date of birth.' })
-//         }
-
-
-//         var newOrder = new order();
-//         newOrder.cans = cans;
-//         newOrder.address = address;
-//         newOrder.phoneNo = phoneNo;
-//         newOrder.name = name;
-
-
-//         await newOrder.save();
-
-//         res.status(200).json({
-//             status: true,
-//             msg: "Order created Successfully",
-//             data: newOrder,
-//         })
-//         return;
-//     } catch (e) {
-//         console.log(e)
-//         res.status(500).json({
-//             status: false,
-//             msg: 'Something went wrong!'
-//         });
-//     }
-// })
 
 router.get('/getadmin', async (req, res) => {
     const orders = await Order.find({}, '_id address phoneNo cans totalCans deliverystatus')
@@ -316,10 +275,22 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 router.post('/Orders', async (req, res) => {
     try {
         const orders = new Order(req.body);
         await orders.save();
+
+        // Find the user associated with the order
+        const user = await User.findOne({ phoneNumber: orders.phoneNo });
+
+        if (user) {
+            // Generate and send the invoice email
+            await sendInvoiceEmail(orders, user);
+        } else {
+            console.error('User not found for the order');
+        }
+
         res.status(201).send(orders);
     } catch (error) {
         console.log(error)
@@ -355,69 +326,6 @@ router.get('/orders-by-date/:date', async (req, res) => {
    
 
 
-// Route for generating the invoice PDF
-router.get('/generate-invoice', (req, res) => {
-  const { address, numberOfCans } = req.query;
-
-  // Create the invoice data
-  const data = {
-    // Invoice Details
-    "currency": "INR", // Indian Rupees
-    "taxNotation": "gst", // GST
-    "marginTop": 25,
-    "marginRight": 25,
-    "marginLeft": 25,
-    "marginBottom": 25,
-
-    // Seller Details
-    "sender": {
-      "company": "Varsh Waters",
-      "address": "Your Company Address",
-      "zip": "Zip Code",
-      "city": "City",
-      "country": "Country"
-    },
-
-    // Client Details
-    "client": {
-      "company": "",
-      "address": address,
-      "zip": "",
-      "city": "",
-      "country": ""
-    },
-
-    // Invoice Data
-    "invoiceNumber": `Invoice No. ${Math.floor(Math.random() * 1000000)}`,
-    "invoiceDate": new Date().toISOString().split('T')[0],
-    "products": [
-      {
-        "quantity": numberOfCans,
-        "description": "Water Cans",
-        "tax": 18, // GST rate (18%)
-        "price": 50.00 // Price per can (in INR)
-      }
-    ],
-
-    // Invoice Footer
-    "bottomNotice": "Thank you for your order!"
-  };
-
-  // Generate the invoice
-  const invoice = new easyinvoice(data);
-
-  // Generate the invoice as a PDF buffer
-  invoice.toBuffer(function (err, buffer) {
-    if (err) {
-      console.error(err);
-      res.status(500).send('Error generating invoice');
-    } else {
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'inline; filename=invoice.pdf');
-      res.send(buffer);
-    }
-  });
-});
 
 
 module.exports = router;
