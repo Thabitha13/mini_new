@@ -4,8 +4,12 @@ const User = require('../Models/userModel');
 const Order = require('../Models/orderModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const nodemailer = require("nodemailer");
 const { generateInvoice, sendInvoiceEmail } = require('./invoice');
 const secretKey = process.env.JWT_SECRET;
+require("dotenv").config();
+const EMAIL = "varshwaters@gmail.com"
+const PASSWORD = "xmnt ikbd dkut knzo"
 
 
 router.get('/getadmin', async (req, res) => {
@@ -201,48 +205,65 @@ router.get('/re-order/:id', async (req, res) => {
 })
 
 
-
 router.post('/register', async (req, res) => {
     try {
-        const { name, phoneNumber, email, password } = req.body;
-        const existingUser = await User.findOne({ phoneNumber });
-        if (existingUser) {
-            return res.status(400).json({ error: 'UserExists', message: 'User with this phone number already exists' });
-
-        }
-        const existingEmailUser = await User.findOne({ email });
-
-        if (existingEmailUser) {
-            return res.status(400).json({ error: 'UserExists', message: 'User with this email already exists.' });
-        }
-
-
-
-
-        const newUser = new User({
-            name,
-            phoneNumber,
-            email,
-            password,
-        });
-
-
-        await newUser.save();
-        res.status(200).send('User registration successful');
+      const { name, phoneNumber, email, password } = req.body;
+  
+      // Check for existing user with phone number or email
+      const existingUser = await User.findOne({ $or: [{ phoneNumber }, { email }] });
+      if (existingUser) {
+        return res.status(400).json({ error: 'UserExists', message: 'User with this phone number or email already exists.' });
+      }
+  
+      // Create a new user
+      const newUser = new User({
+        name,
+        phoneNumber,
+        email,
+        password,
+      });
+  
+      // Save the user to the database
+      await newUser.save();
+  
+      // Email verification logic
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        secure: true,
+        auth: {
+          user: EMAIL,
+          pass: PASSWORD,
+        },
+      });
+  
+      const mailOptions = {
+        from: `"No Reply" <${process.env.EMAIL}>`,
+        to: email,
+        subject: "Email Verification",
+        text: `Your email address (${email}) has been successfully verified for your new account. Welcome to the platform!`,
+      };
+  
+      const emailSent = await transporter.sendMail(mailOptions);
+  
+      if (!emailSent) {
+        console.error('Error sending email verification.');
+        return res.status(500).json({ msg: 'Error sending email. Please try again later.' });
+      }
+  
+      res.status(200).json({ msg: 'User registration successful. Your email has been verified.' });
     } catch (error) {
-        if (error.code === 11000 && error.keyPattern.email) {
-            // Duplicate key error, email already exists
-            res.status(400).send('Email is already in use');
-        } else if (error.code === 11000 && error.keyPattern.phoneNumber) {
-            // Duplicate key error, phone number already exists
-            res.status(400).send('Phone number is already in use');
-        } else {
-            console.error(error);
-            res.status(500).send('Error saving user to the database');
+      console.error(error);
+      if (error.code === 11000) { // Handle duplicate key errors
+        if (error.keyPattern.email) {
+          return res.status(400).json({ error: 'UserExists', message: 'Email is already in use' });
+        } else if (error.keyPattern.phoneNumber) {
+          return res.status(400).json({ error: 'UserExists', message: 'Phone number is already in use' });
         }
+      }
+      res.status(500).json({ msg: 'Error saving user to the database' });
     }
-});
-
+  });
+  
 
 // Login route
 router.post('/login', async (req, res) => {
