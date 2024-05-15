@@ -396,7 +396,7 @@
                 responseData.data.forEach((data) => {
                     const row = document.createElement("tr");
 
-                    const columns = ["address", "phoneNo", "totalCans", "deliverystatus"];
+                    const columns = ["city", "houseNo","pincode", "phoneNo", "totalCans", "deliverystatus"];
                     columns.forEach((column) => {
                         const cell = document.createElement("td");
                         cell.textContent = data[column];
