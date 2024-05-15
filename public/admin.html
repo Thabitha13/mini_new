@@ -65,7 +65,6 @@
       }
 
       .deleteButton {
-        background-color: #f44336;
         color: white;
         padding: 8px;
         border: none;
@@ -75,7 +74,7 @@
       }
 
       .deleteButton:hover {
-        background-color: #d32f2f;
+        background-color: #578689;
       }
       .main-container {
         padding-top: 40px;
@@ -103,7 +102,7 @@
 
       header,
       footer {
-        background-color: #333;
+        background-color: #117a8b;
         color: white;
         padding: 10px;
       }
@@ -111,6 +110,47 @@
       footer {
         margin-top: auto;
       }
+      .sidebar {
+        width: 250px; 
+        padding: 10px;
+        background-color: #f0f0f0; 
+        float: left;
+      }
+.form-group {
+    margin-bottom: 15px;
+}
+
+.btn {
+    margin-top: 10px;
+}
+.btn-primary {
+    background-color: #4CAF50; 
+    color: white; 
+    border-color: #4CAF50; 
+}
+
+#logoutButton {
+    background-color:#093c6cfe; 
+    color: white; 
+    border-color:#497395; 
+}
+
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: #008CBA; 
+    color: white; 
+    border-color: #008CBA; 
+}
+.btn-danger,
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active {
+    background-color: #093c6cfe; 
+    color: white; 
+    border-color: #497395; 
+}
     </style>
   </head>
   <body>
@@ -118,12 +158,6 @@
       <h1>Admin Portal</h1>
       <button id="logoutButton">Logout</button>
     </header>
-    <div class="form-group">
-      <label for="orderDate">Select Date:</label>
-      <input type="date" id="orderDate" class="form-control" />
-  </div>
-  <button class="btn btn-primary" onclick="getOrdersByDate()">Get Orders</button>
-  
     <div class="main-container">
       <div class="sidebar">
         <nav
@@ -146,6 +180,12 @@
               >
                 <i class="fas fa-chart-area fa-fw me-3"></i><span>Users</span>
               </a>
+                <div class="form-group">
+                  <p>Get Orders by Date</p>
+                    <label for="orderDate">Select Date:</label>
+                    <input type="date" id="orderDate" class="form-control" />
+                </div>
+                <button class="btn btn-primary" onclick="getOrdersByDate()">Get Orders</button>
             </div>
           </div>
         </nav>

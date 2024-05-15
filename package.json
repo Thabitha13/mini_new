@@ -19,5 +19,11 @@
     "nodemailer": "^6.9.12",
     "otp-generator": "^4.0.1",
     "pdfkit": "^0.15.0"
-  }
+  },
+  "name": "minilatest",
+  "description": "Gypsy",
+  "version": "1.0.0",
+  "main": "app.js",
+  "author": "laya",
+  "license": "ISC"
 }
