@@ -6,7 +6,7 @@ const cors = require('cors');
 
 const app = express();
 const port = 4000;
-mongoose.connect('mongodb+srv://layamariajames5:kanjira2003@cluster0.xzukfam.mongodb.net/newDB');
+mongoose.connect('mongodb+srv://thabithaantony13:thabitha4474@cluster0.5n5w20l.mongodb.net/?retryWrites=true&w=majority');
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => console.log('Connected to MongoDB'));
@@ -33,3 +33,7 @@ app.use(verifyOtp);
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+
+
+
+

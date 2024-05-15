@@ -85,7 +85,7 @@ function generateInvoiceTable(doc, order) {
 
   const item = {
     item: "Water Can",
-    description: "1 Litre",
+    description: "20 Litre",
     amount: order.totalCans * 50,
     quantity: order.totalCans,
   };
