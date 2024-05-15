@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <title>Login page</title>
     <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
     <div class="background"></div>
     <div class="card">
@@ -27,18 +25,13 @@
             </div>
             <button>Submit</button>
         </form>
-
-
     </div>
-
     <script>
         async function submitLoginForm() {
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
             event.preventDefault();
-            
             // Check if the username field is not empty
-           
                 try {
                     const response = await fetch('http://localhost:4000/login', {
                         method: 'POST',
@@ -77,7 +70,6 @@
                 }
          
         }
-        
         // Add event listener to forgot password link
         document.getElementById("forgot-password-link").addEventListener("click", function(event) {
             const username = document.getElementById("username").value;
@@ -94,18 +86,18 @@
             }
         });
         // Function to prevent backward navigation after logout
-function preventBackwardNavigation() {
-    const token = sessionStorage.getItem("token");
-    const role = sessionStorage.getItem("role");
-    if (token) {
-       if(role=='admin'){
-            window.location.href = 'admin.html';
-        }
-        else{
-             window.location.href='test.html'
-        }    
+    function preventBackwardNavigation() {
+        const token = sessionStorage.getItem("token");
+        const role = sessionStorage.getItem("role");
+        if (token) {
+            if(role=='admin'){
+                window.location.href = 'admin.html';
+            }
+            else{
+                window.location.href='test.html'
+            }    
+            }
     }
-}
 
     window.addEventListener("popstate", function () {
         if (token) {
@@ -124,11 +116,8 @@ function preventBackwardNavigation() {
             window.location.href = 'login.html'; // Change "dashboard.html" to the appropriate page
         }
     });
-}
-
 // Call preventBackwardNavigation() function on pages where backward navigation should be prevented
 preventBackwardNavigation();
     </script>
 </body>
-
 </html>

@@ -13,7 +13,7 @@ const PASSWORD = "xmnt ikbd dkut knzo"
 
 
 router.get('/getadmin', async (req, res) => {
-    const orders = await Order.find({}, '_id address phoneNo cans totalCans deliverystatus')
+    const orders = await Order.find({}, '_id city houseNo pincode phoneNo cans totalCans deliverystatus')
         .sort({ createdAt: -1 }) // Sort by createdAt field in descending order
         .exec();
 
