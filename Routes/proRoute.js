@@ -163,10 +163,11 @@ router.get('/user-orders/:phoneNum', async (req, res) => {
         const phoneNo = req.params.phoneNum;
         const orders = await Order.find(
             { phoneNo: phoneNo }, // Filter criteria
-            '_id name address phoneNo cans totalCans deliverystatus', // Projection
+            '_id city houseNo pincode phoneNo totalCans deliverystatus', // Projection
         )
             .sort({ createdAt: -1 }) // Sort by createdAt field in descending order
             .exec();
+            console.log(orders)
 
         res.status(200).json({
             status: true,
@@ -185,7 +186,9 @@ router.get('/re-order/:id', async (req, res) => {
 
         const newOrder = {
             totalCans: order.totalCans,
-            address: order.address,
+            city: order.city,
+            houseNo: order.houseNo,
+            pincode: order.pincode,
             phoneNo: order.phoneNo,
             latitude: order.latitude,
             longitude: order.longitude,

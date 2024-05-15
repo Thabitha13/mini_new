@@ -152,8 +152,10 @@
         <table>
           <thead>
             <tr>
-              <th>Address</th>
-              <th>Phone Number</th>
+              <th>city</th>
+              <th>House No</th>
+              <th>Pincode</th>
+              <th>PhoneNo</th>
               <th>Total Cans</th>
               <th>Delivery Status</th>
               <th>Action</th>
@@ -183,7 +185,9 @@
               const row = document.createElement("tr");
 
               const columns = [
-                "address",
+                "city",
+                "House No",
+                "Pincode",
                 "phoneNo",
                 "totalCans",
                 "deliverystatus",
@@ -263,7 +267,6 @@
         
       }
       function openEditModal(data) {
-        document.getElementById("editName").value = data.name || "";
         document.getElementById("editAddress").value = data.address || "";
         document.getElementById("editPhone").value = data.phoneNo || "";
         document.getElementById("editTotalCans").value = data.totalCans || "";
@@ -278,7 +281,6 @@
       }
       // Function to handle saving edited data
       function saveEditedData() {
-        const editName = document.getElementById("editName").value;
         const editAddress = document.getElementById("editAddress").value;
         const editPhone = document.getElementById("editPhone").value;
         const editTotalCans = document.getElementById("editTotalCans").value;
@@ -288,7 +290,6 @@
 
         // Construct the data object to send in the fetch request
         const editedData = {
-          name: editName,
           address: editAddress,
           phoneNo: editPhone,
           totalCans: editTotalCans,
